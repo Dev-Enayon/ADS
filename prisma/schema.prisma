@@ -1,0 +1,708 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  PENDING_VERIFICATION
+}
+
+enum OpportunityType {
+  VIDEO
+  SURVEY
+  BRAND_CHALLENGE
+  APP_TRIAL
+  PRODUCT_FEEDBACK
+  OTHER
+}
+
+enum OpportunityStatus {
+  DRAFT
+  PENDING_REVIEW
+  APPROVED
+  ACTIVE
+  PAUSED
+  COMPLETED
+  EXPIRED
+  REJECTED
+}
+
+// DEV = development/sample content clearly marked for Part 1.
+// ADVERTISER = real advertiser campaigns (introduced in Part 2).
+enum OpportunitySource {
+  DEV
+  ADVERTISER
+}
+
+enum WatchSessionStatus {
+  STARTED
+  IN_PROGRESS
+  COMPLETED
+  EXPIRED
+  CANCELLED
+  REJECTED
+}
+
+enum RewardStatus {
+  PENDING
+  AVAILABLE
+  HELD
+  REVERSED
+  CANCELLED
+}
+
+enum LedgerType {
+  REWARD
+  REFERRAL_REWARD
+  BONUS
+  WITHDRAWAL
+  REVERSAL
+  ADJUSTMENT
+}
+
+enum LedgerStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REVERSED
+  CANCELLED
+}
+
+enum WithdrawalStatus {
+  PENDING
+  PROCESSING
+  SUCCESS
+  FAILED
+  REVERSED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  BANK_TRANSFER
+  USSD
+  MOBILE_MONEY
+  OTHER
+}
+
+enum NotificationType {
+  REWARD_RECEIVED
+  WITHDRAWAL_CREATED
+  WITHDRAWAL_UPDATED
+  ACCOUNT_STATUS
+  SYSTEM
+  REFERRAL
+  CAMPAIGN
+  SECURITY
+  CAMPAIGN_SUBMITTED
+  CAMPAIGN_APPROVED
+  CAMPAIGN_REJECTED
+  CAMPAIGN_PAUSED
+  CAMPAIGN_COMPLETED
+  LOW_BUDGET
+  PAYMENT_SUCCESS
+  PAYMENT_FAILED
+}
+
+enum ReferralStatus {
+  PENDING
+  ELIGIBLE
+  COMPLETED
+  REJECTED
+}
+
+// ---------------------------------------------------------------------------
+// Core identity
+// ---------------------------------------------------------------------------
+
+model User {
+  id                  String                @id @default(cuid())
+  email               String                @unique
+  emailVerifiedAt     DateTime?
+  passwordHash        String
+  status              UserStatus            @default(PENDING_VERIFICATION)
+  role                String                @default("USER")
+  referralCode        String                @unique
+  referredById        String?
+  referredBy          User?                 @relation("ReferralRelation", fields: [referredById], references: [id], onDelete: SetNull)
+  referredUsers       User[]                @relation("ReferralRelation")
+  failedLoginAttempts Int                   @default(0)
+  lockedUntil         DateTime?
+  passwordChangedAt   DateTime?
+  lastLoginAt         DateTime?
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+
+  profile             Profile?
+  wallet              Wallet?
+  sessions            Session[]
+  devices             Device[]
+  watchSessions       WatchSession[]
+  rewards             Reward[]
+  ledgerTransactions  LedgerTransaction[]
+  withdrawals         Withdrawal[]
+  notifications       Notification[]
+  emailVerifications  EmailVerification[]
+  passwordResets      PasswordResetToken[]
+  auditLogs           AuditLog[]
+
+  // Referrals
+  referralsGiven   Referral[] @relation("ReferrerReferrals")
+  referralReceived Referral?  @relation("ReferredUserReferral")
+
+  // Advertiser platform (Part 2)
+  advertiserProfile      AdvertiserProfile?
+  advertiserMemberships  AdvertiserMember[]
+  reviewedCampaigns      Campaign[]        @relation("CampaignReview")
+  reviewedAdvertisers    AdvertiserProfile[] @relation("AdvertiserReview")
+
+  @@index([status])
+  @@index([referredById])
+}
+
+model Profile {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  fullName  String?
+  phone     String?
+  avatarUrl String?
+  country   String?
+  state     String?
+  city      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ---------------------------------------------------------------------------
+// Wallets & ledger (money is stored in minor units -- kobo)
+// ---------------------------------------------------------------------------
+
+model Wallet {
+  id               String              @id @default(cuid())
+  userId           String              @unique
+  user             User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  availableBalance Int                 @default(0) // kobo
+  pendingBalance   Int                 @default(0) // kobo
+  totalEarned      Int                 @default(0) // kobo
+  totalWithdrawn   Int                 @default(0) // kobo
+  version          Int                 @default(0)
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+  transactions     LedgerTransaction[]
+}
+
+model LedgerTransaction {
+  id            String      @id @default(cuid())
+  userId        String
+  walletId      String
+  type          LedgerType
+  direction     String // CREDIT | DEBIT
+  amount        Int // absolute value in kobo
+  balanceAfter  Int // available+pending snapshot after operation, in kobo
+  status        LedgerStatus @default(COMPLETED)
+  reference     String      @unique
+  description   String
+  meta          Json?
+  opportunityId String?
+  rewardId      String?
+  withdrawalId  String?
+
+  createdAt DateTime @default(now())
+
+  user        User       @relation(fields: [userId], references: [id], onDelete: Restrict)
+  wallet      Wallet     @relation(fields: [walletId], references: [id], onDelete: Restrict)
+  withdrawal  Withdrawal? @relation(fields: [withdrawalId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+  @@index([walletId])
+  @@index([type])
+  @@index([reference])
+}
+
+// ---------------------------------------------------------------------------
+// Opportunities & rewards
+// ---------------------------------------------------------------------------
+
+model Opportunity {
+  id                 String            @id @default(cuid())
+  title              String
+  description        String
+  type               OpportunityType   @default(VIDEO)
+  videoUrl           String?
+  thumbnailUrl       String?
+  durationSeconds    Int
+  rewardAmount       Int // kobo
+  status             OpportunityStatus @default(ACTIVE)
+  source             OpportunitySource @default(DEV) // DEV until Part 2 replaces with ADVERTISER
+  advertiserId       String? // reserved for Part 2
+  campaignId         String? // reserved for Part 2
+  startDate          DateTime?
+  endDate            DateTime?
+  maxCompletions     Int?
+  currentCompletions Int               @default(0)
+  isFeatured         Boolean           @default(false)
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  watchSessions WatchSession[]
+  rewards       Reward[]
+
+  campaign   Campaign?            @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  advertiser AdvertiserProfile?   @relation(fields: [advertiserId], references: [id], onDelete: SetNull)
+
+  @@index([status])
+  @@index([type, status])
+  @@index([source])
+  @@index([campaignId])
+}
+
+model WatchSession {
+  id               String              @id @default(cuid())
+  userId           String
+  opportunityId    String
+  startedAt        DateTime            @default(now())
+  completedAt      DateTime?
+  requiredDuration Int // seconds
+  watchedDuration  Int                 @default(0) // seconds, authoritative max observed
+  status           WatchSessionStatus  @default(STARTED)
+  lastHeartbeatAt  DateTime?
+  ipAddress        String?
+  userAgent        String?
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Restrict)
+  opportunity Opportunity  @relation(fields: [opportunityId], references: [id], onDelete: Restrict)
+  reward      Reward?
+
+  @@index([userId])
+  @@index([opportunityId])
+  @@index([status])
+}
+
+model Reward {
+  id              String       @id @default(cuid())
+  userId          String
+  opportunityId   String
+  watchSessionId  String       @unique // one reward per watch session
+  amount          Int // kobo
+  status          RewardStatus @default(PENDING)
+  reason          String?
+  releasedAt      DateTime?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  user          User          @relation(fields: [userId], references: [id], onDelete: Restrict)
+  opportunity   Opportunity   @relation(fields: [opportunityId], references: [id], onDelete: Restrict)
+  watchSession  WatchSession  @relation(fields: [watchSessionId], references: [id], onDelete: Restrict)
+
+  @@index([userId])
+  @@index([opportunityId])
+  @@index([status])
+}
+
+// ---------------------------------------------------------------------------
+// Withdrawals
+// ---------------------------------------------------------------------------
+
+model Withdrawal {
+  id             String           @id @default(cuid())
+  userId         String
+  amount         Int // gross amount debited from available balance, kobo
+  fee            Int              @default(0) // kobo
+  netAmount      Int // amount the user receives (amount - fee), kobo
+  status         WithdrawalStatus @default(PENDING)
+  reference      String           @unique
+  paymentMethod  PaymentMethod    @default(BANK_TRANSFER)
+  paymentDetails Json?
+  idempotencyKey String?
+  failureReason  String?
+  processedAt    DateTime?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  user          User                @relation(fields: [userId], references: [id], onDelete: Restrict)
+  ledgerEntries LedgerTransaction[]
+
+  @@index([userId, createdAt])
+  @@index([status])
+}
+
+// ---------------------------------------------------------------------------
+// Referrals
+// ---------------------------------------------------------------------------
+
+model Referral {
+  id             String         @id @default(cuid())
+  referrerId     String
+  referredUserId String         @unique // a user can only ever be referred once
+  referrer       User           @relation("ReferrerReferrals", fields: [referrerId], references: [id], onDelete: Restrict)
+  referredUser   User           @relation("ReferredUserReferral", fields: [referredUserId], references: [id], onDelete: Restrict)
+  status         ReferralStatus @default(PENDING)
+  amount         Int? // kobo, set when the reward is granted
+  rewardedAt     DateTime?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  @@index([referrerId])
+  @@index([status])
+}
+
+// @note: relation name clash is resolved via ReferralRelation (self FK on User),
+// "ReferrerReferrals" and "ReferredUserReferral".
+
+// ---------------------------------------------------------------------------
+// Notifications
+// ---------------------------------------------------------------------------
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  type      NotificationType
+  title     String
+  message   String
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, read])
+  @@index([userId, createdAt])
+}
+
+// ---------------------------------------------------------------------------
+// Auth infrastructure
+// ---------------------------------------------------------------------------
+
+model Session {
+  id           String    @id @default(cuid())
+  userId       String
+  deviceId     String?
+  tokenHash    String    @unique // sha256 of the raw session token
+  ipAddress    String?
+  userAgent    String?
+  expiresAt    DateTime
+  lastActiveAt DateTime  @default(now())
+  revokedAt    DateTime?
+  createdAt    DateTime  @default(now())
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  device Device? @relation(fields: [deviceId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+}
+
+model Device {
+  id         String    @id @default(cuid())
+  userId     String
+  name       String // e.g. "Chrome · Linux"
+  userAgent  String?
+  ipAddress  String?
+  lastSeenAt DateTime  @default(now())
+  createdAt  DateTime  @default(now())
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessions Session[]
+
+  @@index([userId])
+}
+
+model EmailVerification {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// ---------------------------------------------------------------------------
+// Platform
+// ---------------------------------------------------------------------------
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  action     String
+  entityType String?
+  entityId   String?
+  meta       Json?
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([action])
+  @@index([entityType, entityId])
+}
+
+model PlatformSetting {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       String
+  description String?
+  updatedAt   DateTime @updatedAt
+}
+
+// ---------------------------------------------------------------------------
+// Advertiser Platform (Part 2)
+// ---------------------------------------------------------------------------
+
+enum AdvertiserStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+  REJECTED
+}
+
+enum TeamRole {
+  OWNER
+  MANAGER
+  ANALYST
+}
+
+enum CampaignStatus {
+  DRAFT
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+  SCHEDULED
+  ACTIVE
+  PAUSED
+  COMPLETED
+  EXPIRED
+  CANCELLED
+}
+
+enum CampaignObjective {
+  BRAND_AWARENESS
+  PRODUCT_LAUNCH
+  APP_INSTALL
+  LEAD_GENERATION
+  SALES_PROMOTION
+  ENGAGEMENT
+  OTHER
+}
+
+enum CreativeType {
+  VIDEO
+  OTHER
+}
+
+enum CreativeStatus {
+  DRAFT
+  ACTIVE
+  REJECTED
+  ARCHIVED
+}
+
+enum PaymentProviderCode {
+  DEV_MOCK
+  PAYSTACK
+  FLUTTERWAVE
+  MANUAL
+}
+
+enum FundingStatus {
+  INITIALIZED
+  PENDING_VERIFICATION
+  COMPLETED
+  FAILED
+  REFUNDED
+  REVERSED
+}
+
+model AdvertiserProfile {
+  id                  String            @id @default(cuid())
+  userId              String            @unique
+  businessName        String
+  businessDescription String?
+  businessEmail       String
+  businessPhone       String?
+  website             String?
+  category            String?
+  country             String?
+  state               String?
+  city                String?
+  logoUrl             String?
+  status              AdvertiserStatus  @default(PENDING)
+  rejectionReason     String?
+  reviewedAt          DateTime?
+  reviewedById        String?
+  reviewedBy          User?             @relation("AdvertiserReview", fields: [reviewedById], references: [id], onDelete: SetNull)
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+
+  user        User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  wallet      AdvertiserWallet?
+  members     AdvertiserMember[]
+  campaigns   Campaign[]
+  opportunities Opportunity[]
+  transactions AdvertiserLedgerTransaction[]
+  fundingRecords CampaignFunding[]
+
+  @@index([status])
+}
+
+model AdvertiserMember {
+  id           String   @id @default(cuid())
+  advertiserId String
+  userId       String
+  role         TeamRole @default(ANALYST)
+  createdAt    DateTime @default(now())
+
+  advertiser AdvertiserProfile @relation(fields: [advertiserId], references: [id], onDelete: Cascade)
+  user       User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([advertiserId, userId])
+  @@index([userId])
+}
+
+model Campaign {
+  id                  String            @id @default(cuid())
+  advertiserId        String
+  name                String
+  description         String?
+  objective           CampaignObjective @default(BRAND_AWARENESS)
+  status              CampaignStatus    @default(DRAFT)
+  rewardPerCompletion Int // kobo
+  maxCompletions      Int
+  budget              Int // planned reward budget in kobo = rewardPerCompletion * maxCompletions
+  allocatedAmount     Int               @default(0) // kobo moved from advertiser wallet into the campaign
+  remainingBudget     Int               @default(0) // kobo still available for rewards (allocated - spent)
+  spentAmount         Int               @default(0) // kobo paid out in rewards
+  currentCompletions  Int               @default(0)
+  startedViews        Int               @default(0)
+  completedViews      Int               @default(0)
+  startDate           DateTime?
+  endDate             DateTime?
+  targeting           Json?
+  reviewedAt          DateTime?
+  reviewedById        String?
+  reviewedBy          User?             @relation("CampaignReview", fields: [reviewedById], references: [id], onDelete: SetNull)
+  rejectionReason     String?
+  startedAt           DateTime?
+  pausedAt            DateTime?
+  completedAt         DateTime?
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+
+  advertiser      AdvertiserProfile  @relation(fields: [advertiserId], references: [id], onDelete: Cascade)
+  creatives       Creative[]
+  fundingRecords  CampaignFunding[]
+  opportunities   Opportunity[]
+  createdBy       String?
+  updatedBy       String?
+
+  @@index([advertiserId, status])
+  @@index([status])
+  @@index([advertiserId])
+}
+
+model Creative {
+  id              String         @id @default(cuid())
+  campaignId      String
+  type            CreativeType   @default(VIDEO)
+  videoUrl        String?
+  thumbnailUrl    String?
+  durationSeconds Int
+  title           String
+  description     String?
+  ctaText         String?
+  mimeType        String?
+  fileSizeBytes   Int?
+  meta            Json?
+  status          CreativeStatus @default(DRAFT)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  campaign Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@index([campaignId])
+}
+
+model AdvertiserWallet {
+  id               String   @id @default(cuid())
+  advertiserId     String   @unique
+  availableBalance Int      @default(0) // kobo, unallocated funds
+  totalFunded      Int      @default(0) // kobo, lifetime verified deposits
+  totalAllocated   Int      @default(0) // kobo, lifetime funds moved into campaigns
+  totalSpent       Int      @default(0) // kobo, lifetime campaign reward spend
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  advertiser   AdvertiserProfile           @relation(fields: [advertiserId], references: [id], onDelete: Cascade)
+  transactions AdvertiserLedgerTransaction[]
+}
+
+model AdvertiserLedgerTransaction {
+  id           String   @id @default(cuid())
+  advertiserId String
+  walletId     String
+  type         String // FUNDING_CREDIT | CAMPAIGN_ALLOCATION | REFUND | ESCROW_SPEND | ADJUSTMENT
+  direction    String // CREDIT | DEBIT
+  amount       Int // kobo, absolute value
+  balanceAfter Int // kobo, advertiser wallet availableBalance after the transaction
+  reference    String   @unique
+  description  String
+  campaignId   String?
+  fundingId    String?
+  meta         Json?
+  createdAt    DateTime @default(now())
+
+  advertiser AdvertiserProfile  @relation(fields: [advertiserId], references: [id], onDelete: Restrict)
+  wallet     AdvertiserWallet   @relation(fields: [walletId], references: [id], onDelete: Restrict)
+
+  @@index([advertiserId, createdAt])
+  @@index([campaignId])
+  @@index([fundingId])
+}
+
+model CampaignFunding {
+  id            String             @id @default(cuid())
+  advertiserId  String
+  campaignId    String?
+  amount        Int                // kobo
+  status        FundingStatus      @default(INITIALIZED)
+  provider      PaymentProviderCode @default(DEV_MOCK)
+  providerRef   String?
+  reference     String             @unique
+  idempotencyKey String?
+  meta          Json?
+  failureReason String?
+  verifiedAt    DateTime?
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+
+  advertiser AdvertiserProfile @relation(fields: [advertiserId], references: [id], onDelete: Restrict)
+  campaign   Campaign?         @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+
+  @@index([advertiserId, createdAt])
+  @@index([campaignId])
+  @@index([reference])
+}
