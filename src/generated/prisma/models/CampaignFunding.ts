@@ -643,10 +643,6 @@ export type EnumFundingStatusFieldUpdateOperationsInput = {
   set?: $Enums.FundingStatus
 }
 
-export type EnumPaymentProviderCodeFieldUpdateOperationsInput = {
-  set?: $Enums.PaymentProviderCode
-}
-
 export type CampaignFundingCreateWithoutAdvertiserInput = {
   id?: string
   amount: number

@@ -73,7 +73,9 @@ export const ModelName = {
   Creative: 'Creative',
   AdvertiserWallet: 'AdvertiserWallet',
   AdvertiserLedgerTransaction: 'AdvertiserLedgerTransaction',
-  CampaignFunding: 'CampaignFunding'
+  CampaignFunding: 'CampaignFunding',
+  WebhookEvent: 'WebhookEvent',
+  RiskEvent: 'RiskEvent'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -236,7 +238,12 @@ export const WithdrawalScalarFieldEnum = {
   paymentDetails: 'paymentDetails',
   idempotencyKey: 'idempotencyKey',
   failureReason: 'failureReason',
+  provider: 'provider',
+  providerRef: 'providerRef',
+  providerStatus: 'providerStatus',
+  payoutAttempts: 'payoutAttempts',
   processedAt: 'processedAt',
+  processedById: 'processedById',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -492,6 +499,45 @@ export const CampaignFundingScalarFieldEnum = {
 export type CampaignFundingScalarFieldEnum = (typeof CampaignFundingScalarFieldEnum)[keyof typeof CampaignFundingScalarFieldEnum]
 
 
+export const WebhookEventScalarFieldEnum = {
+  id: 'id',
+  provider: 'provider',
+  providerEventId: 'providerEventId',
+  type: 'type',
+  entityType: 'entityType',
+  entityId: 'entityId',
+  externalRef: 'externalRef',
+  status: 'status',
+  payload: 'payload',
+  error: 'error',
+  processedAt: 'processedAt',
+  receivedAt: 'receivedAt'
+} as const
+
+export type WebhookEventScalarFieldEnum = (typeof WebhookEventScalarFieldEnum)[keyof typeof WebhookEventScalarFieldEnum]
+
+
+export const RiskEventScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  severity: 'severity',
+  description: 'description',
+  meta: 'meta',
+  entityType: 'entityType',
+  entityId: 'entityId',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent',
+  resolved: 'resolved',
+  resolvedById: 'resolvedById',
+  resolvedAt: 'resolvedAt',
+  resolution: 'resolution',
+  createdAt: 'createdAt'
+} as const
+
+export type RiskEventScalarFieldEnum = (typeof RiskEventScalarFieldEnum)[keyof typeof RiskEventScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -506,6 +552,13 @@ export const NullableJsonNullValueInput = {
 } as const
 
 export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const QueryMode = {

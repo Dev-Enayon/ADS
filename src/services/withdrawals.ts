@@ -1,12 +1,23 @@
 import "server-only";
 
 import type { Prisma } from "@/generated/prisma/client";
-import { NotificationType, PaymentMethod, UserStatus, WithdrawalStatus } from "@/generated/prisma/enums";
+import {
+  NotificationType,
+  PaymentMethod,
+  RiskEventType,
+  UserStatus,
+  WithdrawalStatus,
+} from "@/generated/prisma/enums";
 import { prisma } from "@/lib/db";
 import { Errors } from "@/lib/errors";
 import { formatMoney } from "@/lib/money";
-import { withdrawalRules } from "@/lib/settings";
+import {
+  maxWithdrawalsPerHour,
+  withdrawalRules,
+  withdrawalsEnabled,
+} from "@/lib/settings";
 import { debitAvailableTx, refundDebitTx } from "@/services/wallet";
+import { recordRiskEvent } from "@/services/risk";
 import { randomUUID } from "node:crypto";
 
 export type CreateWithdrawalInput = {
@@ -35,6 +46,14 @@ export async function createWithdrawal(input: CreateWithdrawalInput) {
   });
   if (!user) throw Errors.unauthorized();
   await assertCanWithdraw(user);
+
+  // Master switch: operators disable payouts instantly (e.g. provider outage).
+  if (!(await withdrawalsEnabled())) {
+    throw Errors.conflict(
+      "Withdrawals are currently disabled. Please try again later.",
+      "WITHDRAWALS_DISABLED",
+    );
+  }
 
   const rules = await withdrawalRules();
 
@@ -100,6 +119,31 @@ export async function createWithdrawal(input: CreateWithdrawalInput) {
   }
 
   const reference = `WD-${randomUUID().slice(0, 12).toUpperCase()}`;
+
+  // Fraud signal (non-blocking): repeated withdrawal requests over the per-hour
+  // cap. The single in-flight guard already blocks concurrent abuse; this
+  // surfaces a pattern to admins.
+  try {
+    const [recentInHour, perHourLimit] = await Promise.all([
+      prisma.withdrawal.count({
+        where: { userId: input.userId, createdAt: { gte: new Date(Date.now() - 60 * 60 * 1000) } },
+      }),
+      maxWithdrawalsPerHour(),
+    ]);
+    if (perHourLimit > 0 && recentInHour + 1 > perHourLimit) {
+      await recordRiskEvent({
+        userId: input.userId,
+        type: RiskEventType.WITHDRAWAL_ABUSE,
+        severity: "HIGH",
+        description: "Withdrawal requests above the per-hour threshold.",
+        entityType: "Withdrawal",
+        meta: { recentInHour, perHourLimit },
+        ipAddress: input.ip ?? null,
+      });
+    }
+  } catch {
+    // best-effort
+  }
 
   const withdrawal = await prisma.$transaction(async (tx) => {
     await debitAvailableTx(tx, {

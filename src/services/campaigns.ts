@@ -577,6 +577,83 @@ export async function resumeCampaign(
   });
 }
 
+/**
+ * Part 3 admin variants of pause/resume. The advertiser-branded endpoints
+ * require a membership context; operators act on any campaign directly.
+ */
+export async function adminPauseCampaign(
+  campaignId: string,
+  actorId: string,
+  opts: { ip?: string | null; reason?: string } = {},
+) {
+  const campaign = await prisma.campaign.findUnique({ where: { id: campaignId } });
+  if (!campaign) throw Errors.notFound("Campaign not found.");
+  if (campaign.status !== CampaignStatus.ACTIVE && campaign.status !== CampaignStatus.SCHEDULED) {
+    throw Errors.conflict("Only active or scheduled campaigns can be paused.", "INVALID_STATE");
+  }
+
+  await prisma.campaign.update({
+    where: { id: campaign.id },
+    data: { status: CampaignStatus.PAUSED, pausedAt: new Date() },
+  } as never);
+  await setOpportunityStatus(campaign.id, OpportunityStatus.PAUSED);
+  await audit({
+    userId: actorId,
+    action: "CAMPAIGN.ADMIN_PAUSED",
+    entityType: "Campaign",
+    entityId: campaign.id,
+    meta: { reason: opts.reason ?? null },
+    ip: opts.ip,
+  });
+  await notifyOwner(
+    campaign.advertiserId,
+    NotificationType.CAMPAIGN_PAUSED,
+    "Campaign paused",
+    `"${campaign.name}" was paused by an operator and is no longer shown to viewers.`,
+  );
+}
+
+export async function adminResumeCampaign(
+  campaignId: string,
+  actorId: string,
+  opts: { ip?: string | null; reason?: string } = {},
+) {
+  const campaign = await prisma.campaign.findUnique({ where: { id: campaignId } });
+  if (!campaign) throw Errors.notFound("Campaign not found.");
+  if (campaign.status !== CampaignStatus.PAUSED) {
+    throw Errors.conflict("Only paused campaigns can be resumed.", "INVALID_STATE");
+  }
+  if (campaign.remainingBudget < campaign.rewardPerCompletion) {
+    throw Errors.badRequest("This campaign has no remaining budget.", "INSUFFICIENT_BUDGET");
+  }
+  if (campaign.currentCompletions >= campaign.maxCompletions) {
+    throw Errors.badRequest("This campaign already reached its completion target.", "CAMPAIGN_FULL");
+  }
+  if (campaign.endDate && campaign.endDate.getTime() < Date.now()) {
+    throw Errors.badRequest("This campaign's end date has passed.", "CAMPAIGN_EXPIRED");
+  }
+
+  await prisma.campaign.update({
+    where: { id: campaign.id },
+    data: { status: CampaignStatus.ACTIVE, pausedAt: null },
+  } as never);
+  await activateCampaignFeed(campaign.id);
+  await audit({
+    userId: actorId,
+    action: "CAMPAIGN.ADMIN_RESUMED",
+    entityType: "Campaign",
+    entityId: campaign.id,
+    meta: { reason: opts.reason ?? null },
+    ip: opts.ip,
+  });
+  await notifyOwner(
+    campaign.advertiserId,
+    NotificationType.CAMPAIGN_RESUMED,
+    "Campaign resumed",
+    `"${campaign.name}" was resumed by an operator and is shown to viewers again.`,
+  );
+}
+
 export async function cancelCampaign(
   userId: string,
   campaignId: string,

@@ -156,3 +156,19 @@ export type AdvertiserLedgerTransaction = Prisma.AdvertiserLedgerTransactionMode
  * 
  */
 export type CampaignFunding = Prisma.CampaignFundingModel
+/**
+ * Model WebhookEvent
+ * *
+ *  * Ingoing webhook events (payments + payouts). The unique
+ *  * (provider, providerEventId) pair makes provider redeliveries idempotent;
+ *  * the processor flips the linked entity only via guarded conditional updates.
+ */
+export type WebhookEvent = Prisma.WebhookEventModel
+/**
+ * Model RiskEvent
+ * *
+ *  * Deterministic fraud/risk signal. Recorded by server-side checks (watch
+ *  * sessions, withdrawals, referrals) and reviewed/resolved by admins. Severity
+ *  * is LOW/MEDIUM/HIGH (String to keep the value set flexible).
+ */
+export type RiskEvent = Prisma.RiskEventModel

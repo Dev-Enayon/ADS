@@ -43,4 +43,8 @@ export const Errors = {
     new AppError(400, "INSUFFICIENT_FUNDS", msg),
   suspended: (msg = "This account is suspended.") =>
     new AppError(403, "ACCOUNT_SUSPENDED", msg),
+  serviceUnavailable: (msg = "Service is temporarily unavailable.") =>
+    new AppError(503, "SERVICE_UNAVAILABLE", msg),
+  rateLimitExceeded: (msg = "You've hit a limit. Try again later.") =>
+    new AppError(429, "RATE_LIMIT_EXCEEDED", msg),
 };

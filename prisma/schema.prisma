@@ -17,6 +17,14 @@ enum UserStatus {
   PENDING_VERIFICATION
 }
 
+// Platform roles. "USER" is a regular app user; ADMIN/SUPER_ADMIN operate the
+// Part 3 admin console. SUPER_ADMIN is the only role that can manage admins.
+enum UserRole {
+  USER
+  ADMIN
+  SUPER_ADMIN
+}
+
 enum OpportunityType {
   VIDEO
   SURVEY
@@ -111,6 +119,19 @@ enum NotificationType {
   LOW_BUDGET
   PAYMENT_SUCCESS
   PAYMENT_FAILED
+  CAMPAIGN_DELETED
+  CAMPAIGN_RESUMED
+  CREATIVE_REJECTED
+  PAYMENT_REFUNDED
+  PAYOUT_SUCCEEDED
+  PAYOUT_FAILED
+  HIGH_RISK_FLAG
+  ACCOUNT_SUSPENDED
+  ACCOUNT_REACTIVATED
+  ADVERTISER_APPROVED
+  ADVERTISER_REJECTED
+  ADVERTISER_SUSPENDED
+  ADVERTISER_REACTIVATED
 }
 
 enum ReferralStatus {
@@ -118,6 +139,26 @@ enum ReferralStatus {
   ELIGIBLE
   COMPLETED
   REJECTED
+}
+
+// Part 3: ingoing webhook activity from payment/payout providers.
+// (provider, providerEventId) is unique so redeliveries are idempotent.
+enum WebhookEventStatus {
+  PENDING
+  PROCESSED
+  IGNORED
+  FAILED
+}
+
+enum RiskEventType {
+  SESSION_TAMPERING
+  HEARTBEAT_ANOMALY
+  DEVICE_IP_MISMATCH
+  RAPID_CONSUMPTION
+  WITHDRAWAL_ABUSE
+  SUSPICIOUS_REFERRAL
+  ACCOUNT_FLAG
+  SYSTEM
 }
 
 // ---------------------------------------------------------------------------
@@ -130,7 +171,7 @@ model User {
   emailVerifiedAt     DateTime?
   passwordHash        String
   status              UserStatus            @default(PENDING_VERIFICATION)
-  role                String                @default("USER")
+  role                UserRole              @default(USER)
   referralCode        String                @unique
   referredById        String?
   referredBy          User?                 @relation("ReferralRelation", fields: [referredById], references: [id], onDelete: SetNull)
@@ -164,6 +205,11 @@ model User {
   advertiserMemberships  AdvertiserMember[]
   reviewedCampaigns      Campaign[]        @relation("CampaignReview")
   reviewedAdvertisers    AdvertiserProfile[] @relation("AdvertiserReview")
+
+  // Part 3: admin processed withdrawals + risk events
+  processedWithdrawals Withdrawal[]  @relation("WithdrawalProcessor")
+  resolvedRiskEvents   RiskEvent[]   @relation("RiskResolver")
+  riskEvents           RiskEvent[]
 
   @@index([status])
   @@index([referredById])
@@ -327,15 +373,23 @@ model Withdrawal {
   paymentDetails Json?
   idempotencyKey String?
   failureReason  String?
+  // Part 3 payout provider fields (populated server-side / via webhook only)
+  provider       PaymentProviderCode @default(MANUAL)
+  providerRef    String?
+  providerStatus String?
+  payoutAttempts Int                @default(0)
   processedAt    DateTime?
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
+  processedById  String?
+  processedBy    User?              @relation("WithdrawalProcessor", fields: [processedById], references: [id], onDelete: SetNull)
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
 
   user          User                @relation(fields: [userId], references: [id], onDelete: Restrict)
   ledgerEntries LedgerTransaction[]
 
   @@index([userId, createdAt])
   @@index([status])
+  @@index([provider, providerRef])
 }
 
 // ---------------------------------------------------------------------------
@@ -705,4 +759,63 @@ model CampaignFunding {
   @@index([advertiserId, createdAt])
   @@index([campaignId])
   @@index([reference])
+}
+
+// ---------------------------------------------------------------------------
+// Part 3: Admin, payments & payouts, fraud controls
+// ---------------------------------------------------------------------------
+
+/**
+ * Ingoing webhook events (payments + payouts). The unique
+ * (provider, providerEventId) pair makes provider redeliveries idempotent;
+ * the processor flips the linked entity only via guarded conditional updates.
+ */
+model WebhookEvent {
+  id              String             @id @default(cuid())
+  provider        String
+  providerEventId String
+  type            String
+  entityType      String? // WITHDRAWAL | CAMPAIGN_FUNDING
+  entityId        String?
+  externalRef     String?
+  status          WebhookEventStatus @default(PENDING)
+  payload         Json
+  error           String?
+  processedAt     DateTime?
+  receivedAt      DateTime           @default(now())
+
+  @@unique([provider, providerEventId])
+  @@index([entityType, entityId])
+  @@index([status])
+  @@index([receivedAt])
+}
+
+/**
+ * Deterministic fraud/risk signal. Recorded by server-side checks (watch
+ * sessions, withdrawals, referrals) and reviewed/resolved by admins. Severity
+ * is LOW/MEDIUM/HIGH (String to keep the value set flexible).
+ */
+model RiskEvent {
+  id          String        @id @default(cuid())
+  userId      String
+  type        RiskEventType
+  severity    String // LOW | MEDIUM | HIGH
+  description String
+  meta        Json?
+  entityType  String?
+  entityId    String?
+  ipAddress   String?
+  userAgent   String?
+  resolved    Boolean       @default(false)
+  resolvedById String?
+  resolvedBy  User?         @relation("RiskResolver", fields: [resolvedById], references: [id], onDelete: SetNull)
+  resolvedAt  DateTime?
+  resolution  String?
+  createdAt   DateTime      @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([type])
+  @@index([resolved])
 }

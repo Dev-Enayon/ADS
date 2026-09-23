@@ -5,8 +5,10 @@ import { NotificationType, ReferralStatus } from "@/generated/prisma/enums";
 import { prisma } from "@/lib/db";
 import { Errors } from "@/lib/errors";
 import { formatMoney } from "@/lib/money";
-import { referralRewardAmount } from "@/lib/settings";
+import { referralRewardAmount, suspiciousReferralThreshold } from "@/lib/settings";
 import { creditAvailableTx } from "@/services/wallet";
+import { recordRiskEvent } from "@/services/risk";
+import { RiskEventType } from "@/generated/prisma/enums";
 
 /**
  * Referral foundation (Part 1).
@@ -78,6 +80,33 @@ export async function maybeCreditReferrer(
   if (availableRewards < 1) return false;
 
   const amount = await referralRewardAmount();
+
+  // Fraud signal (non-blocking): many accounts created under the same referrer
+  // in a short window smells like referral farming. Threshold 0 disables it.
+  try {
+    const threshold = await suspiciousReferralThreshold();
+    if (threshold > 0) {
+      const recentInHour = await client.referral.count({
+        where: {
+          referrerId: referral.referrerId,
+          createdAt: { gte: new Date(Date.now() - 60 * 60 * 1000) },
+        },
+      });
+      if (recentInHour >= threshold) {
+        await recordRiskEvent({
+          userId: referral.referrerId,
+          type: RiskEventType.SUSPICIOUS_REFERRAL,
+          severity: "HIGH",
+          description: "A large number of referrals recorded in a short window.",
+          entityType: "Referral",
+          entityId: referral.id,
+          meta: { recentInHour, threshold },
+        });
+      }
+    }
+  } catch {
+    // Please render fraud capture harmless.
+  }
 
   await client.$transaction(async (tx) => {
     const claimed = await tx.referral.updateMany({

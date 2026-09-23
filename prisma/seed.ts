@@ -19,6 +19,7 @@ import {
   CampaignStatus,
   OpportunitySource,
   TeamRole,
+  UserRole,
   UserStatus,
 } from "../src/generated/prisma/enums";
 
@@ -57,6 +58,16 @@ const SETTINGS: Array<{ key: string; value: string; description: string }> = [
   { key: "CAMPAIGN_MAX_COMPLETIONS", value: "1000000", description: "Max campaign completions" },
   { key: "CAMPAIGN_FEE_RATE", value: "0", description: "Advertiser platform fee rate (%)" },
   { key: "ADVERTISER_REVIEW_MODE", value: "auto", description: "Submission review mode: auto (dev) or hold (prod)" },
+  // --- Part 3: ops knobs surfaced in the admin console -------------------
+  { key: "MAINTENANCE_MODE", value: "false", description: "Block all non-admin state-changing traffic" },
+  { key: "ENABLE_WITHDRAWALS", value: "true", description: "Master switch for user withdrawals" },
+  { key: "MAX_WITHDRAWALS_PER_HOUR", value: "3", description: "Per-hour withdrawal requests before flagging" },
+  { key: "SUSPICIOUS_REFERRAL_THRESHOLD", value: "0", description: "Hourly referral volume that flags a chain (0 = disabled)" },
+  { key: "WATCH_HEARTBEAT_MIN_INTERVAL_SECONDS", value: "5", description: "Minimum acceptable gap between heartbeats" },
+  { key: "WATCH_MAX_STEP_SECONDS", value: "30", description: "Max progress a single heartbeat may claim" },
+  { key: "MAX_COMPLETIONS_PER_HOUR", value: "30", description: "Per-hour watch completions that flag a user" },
+  { key: "MAX_ACTIVE_WATCH_PER_BROWSER", value: "3", description: "Max active sessions tied to a single browser fingerprint" },
+  { key: "ACCOUNT_SUSPENSION_HIGH_RISK", value: "false", description: "Auto-suspend users on HIGH risk events" },
 ];
 
 // Google-hosted sample videos (public, stable) used ONLY in dev seed data.
@@ -230,6 +241,39 @@ userId: advUserId,
     },
   });
   console.log(`Advertiser demo ensured: ${advertiser.businessName} (zero funds, DRAFT campaign).`);
+
+  // --- Bootstrap admin (Part 3) -------------------------------------------
+  // Controlled by BOOTSTRAP_ADMIN_EMAIL / BOOTSTRAP_ADMIN_PASSWORD. Idempotent:
+  // creates a verified SUPER_ADMIN when the email is missing; promotes an
+  // existing account otherwise so a deploy can always guarantee an admin.
+  const bootstrapEmail = process.env.BOOTSTRAP_ADMIN_EMAIL ?? "";
+  const bootstrapPassword = process.env.BOOTSTRAP_ADMIN_PASSWORD ?? "";
+  if (bootstrapEmail && bootstrapPassword) {
+    const existing = await prisma.user.findUnique({ where: { email: bootstrapEmail } });
+    if (!existing) {
+      await prisma.user.create({
+        data: {
+          email: bootstrapEmail,
+          passwordHash: await hashPassword(bootstrapPassword),
+          status: UserStatus.ACTIVE,
+role: UserRole.SUPER_ADMIN,
+          emailVerifiedAt: new Date(),
+          referralCode: generateReferralCode(),
+          profile: { create: { fullName: "Bootstrap Administrator" } },
+          wallet: { create: {} },
+        },
+      });
+      console.log(`Bootstrap super admin ensured: ${bootstrapEmail}`);
+    } else if (existing.role !== UserRole.SUPER_ADMIN) {
+      await prisma.user.update({
+        where: { id: existing.id },
+        data: { role: UserRole.SUPER_ADMIN, status: UserStatus.ACTIVE },
+      });
+      console.log(`Bootstrap super admin promoted: ${bootstrapEmail}`);
+    } else {
+      console.log(`Bootstrap super admin already present: ${bootstrapEmail}`);
+    }
+  }
 
   console.log("Seed complete.");
 }

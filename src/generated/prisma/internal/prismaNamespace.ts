@@ -419,7 +419,9 @@ export const ModelName = {
   Creative: 'Creative',
   AdvertiserWallet: 'AdvertiserWallet',
   AdvertiserLedgerTransaction: 'AdvertiserLedgerTransaction',
-  CampaignFunding: 'CampaignFunding'
+  CampaignFunding: 'CampaignFunding',
+  WebhookEvent: 'WebhookEvent',
+  RiskEvent: 'RiskEvent'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -435,7 +437,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "profile" | "wallet" | "ledgerTransaction" | "opportunity" | "watchSession" | "reward" | "withdrawal" | "referral" | "notification" | "session" | "device" | "emailVerification" | "passwordResetToken" | "auditLog" | "platformSetting" | "advertiserProfile" | "advertiserMember" | "campaign" | "creative" | "advertiserWallet" | "advertiserLedgerTransaction" | "campaignFunding"
+    modelProps: "user" | "profile" | "wallet" | "ledgerTransaction" | "opportunity" | "watchSession" | "reward" | "withdrawal" | "referral" | "notification" | "session" | "device" | "emailVerification" | "passwordResetToken" | "auditLog" | "platformSetting" | "advertiserProfile" | "advertiserMember" | "campaign" | "creative" | "advertiserWallet" | "advertiserLedgerTransaction" | "campaignFunding" | "webhookEvent" | "riskEvent"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2141,6 +2143,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    WebhookEvent: {
+      payload: Prisma.$WebhookEventPayload<ExtArgs>
+      fields: Prisma.WebhookEventFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.WebhookEventFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebhookEventPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.WebhookEventFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebhookEventPayload>
+        }
+        findFirst: {
+          args: Prisma.WebhookEventFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebhookEventPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.WebhookEventFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebhookEventPayload>
+        }
+        findMany: {
+          args: Prisma.WebhookEventFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebhookEventPayload>[]
+        }
+        create: {
+          args: Prisma.WebhookEventCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebhookEventPayload>
+        }
+        createMany: {
+          args: Prisma.WebhookEventCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.WebhookEventCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebhookEventPayload>[]
+        }
+        delete: {
+          args: Prisma.WebhookEventDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebhookEventPayload>
+        }
+        update: {
+          args: Prisma.WebhookEventUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebhookEventPayload>
+        }
+        deleteMany: {
+          args: Prisma.WebhookEventDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.WebhookEventUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.WebhookEventUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebhookEventPayload>[]
+        }
+        upsert: {
+          args: Prisma.WebhookEventUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebhookEventPayload>
+        }
+        aggregate: {
+          args: Prisma.WebhookEventAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateWebhookEvent>
+        }
+        groupBy: {
+          args: Prisma.WebhookEventGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WebhookEventGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.WebhookEventCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WebhookEventCountAggregateOutputType> | number
+        }
+      }
+    }
+    RiskEvent: {
+      payload: Prisma.$RiskEventPayload<ExtArgs>
+      fields: Prisma.RiskEventFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.RiskEventFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RiskEventPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.RiskEventFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RiskEventPayload>
+        }
+        findFirst: {
+          args: Prisma.RiskEventFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RiskEventPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.RiskEventFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RiskEventPayload>
+        }
+        findMany: {
+          args: Prisma.RiskEventFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RiskEventPayload>[]
+        }
+        create: {
+          args: Prisma.RiskEventCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RiskEventPayload>
+        }
+        createMany: {
+          args: Prisma.RiskEventCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.RiskEventCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RiskEventPayload>[]
+        }
+        delete: {
+          args: Prisma.RiskEventDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RiskEventPayload>
+        }
+        update: {
+          args: Prisma.RiskEventUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RiskEventPayload>
+        }
+        deleteMany: {
+          args: Prisma.RiskEventDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.RiskEventUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.RiskEventUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RiskEventPayload>[]
+        }
+        upsert: {
+          args: Prisma.RiskEventUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RiskEventPayload>
+        }
+        aggregate: {
+          args: Prisma.RiskEventAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateRiskEvent>
+        }
+        groupBy: {
+          args: Prisma.RiskEventGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RiskEventGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.RiskEventCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RiskEventCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -2324,7 +2474,12 @@ export const WithdrawalScalarFieldEnum = {
   paymentDetails: 'paymentDetails',
   idempotencyKey: 'idempotencyKey',
   failureReason: 'failureReason',
+  provider: 'provider',
+  providerRef: 'providerRef',
+  providerStatus: 'providerStatus',
+  payoutAttempts: 'payoutAttempts',
   processedAt: 'processedAt',
+  processedById: 'processedById',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -2580,6 +2735,45 @@ export const CampaignFundingScalarFieldEnum = {
 export type CampaignFundingScalarFieldEnum = (typeof CampaignFundingScalarFieldEnum)[keyof typeof CampaignFundingScalarFieldEnum]
 
 
+export const WebhookEventScalarFieldEnum = {
+  id: 'id',
+  provider: 'provider',
+  providerEventId: 'providerEventId',
+  type: 'type',
+  entityType: 'entityType',
+  entityId: 'entityId',
+  externalRef: 'externalRef',
+  status: 'status',
+  payload: 'payload',
+  error: 'error',
+  processedAt: 'processedAt',
+  receivedAt: 'receivedAt'
+} as const
+
+export type WebhookEventScalarFieldEnum = (typeof WebhookEventScalarFieldEnum)[keyof typeof WebhookEventScalarFieldEnum]
+
+
+export const RiskEventScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  severity: 'severity',
+  description: 'description',
+  meta: 'meta',
+  entityType: 'entityType',
+  entityId: 'entityId',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent',
+  resolved: 'resolved',
+  resolvedById: 'resolvedById',
+  resolvedAt: 'resolvedAt',
+  resolution: 'resolution',
+  createdAt: 'createdAt'
+} as const
+
+export type RiskEventScalarFieldEnum = (typeof RiskEventScalarFieldEnum)[keyof typeof RiskEventScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -2594,6 +2788,13 @@ export const NullableJsonNullValueInput = {
 } as const
 
 export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const QueryMode = {
@@ -2666,6 +2867,20 @@ export type EnumUserStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$Prism
  * Reference to a field of type 'UserStatus[]'
  */
 export type ListEnumUserStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'UserRole'
+ */
+export type EnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserRole'>
+    
+
+
+/**
+ * Reference to a field of type 'UserRole[]'
+ */
+export type ListEnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserRole[]'>
     
 
 
@@ -2831,6 +3046,20 @@ export type ListEnumPaymentMethodFieldRefInput<$PrismaModel> = FieldRefInputType
 
 
 /**
+ * Reference to a field of type 'PaymentProviderCode'
+ */
+export type EnumPaymentProviderCodeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentProviderCode'>
+    
+
+
+/**
+ * Reference to a field of type 'PaymentProviderCode[]'
+ */
+export type ListEnumPaymentProviderCodeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentProviderCode[]'>
+    
+
+
+/**
  * Reference to a field of type 'ReferralStatus'
  */
 export type EnumReferralStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReferralStatus'>
@@ -2957,16 +3186,30 @@ export type ListEnumFundingStatusFieldRefInput<$PrismaModel> = FieldRefInputType
 
 
 /**
- * Reference to a field of type 'PaymentProviderCode'
+ * Reference to a field of type 'WebhookEventStatus'
  */
-export type EnumPaymentProviderCodeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentProviderCode'>
+export type EnumWebhookEventStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'WebhookEventStatus'>
     
 
 
 /**
- * Reference to a field of type 'PaymentProviderCode[]'
+ * Reference to a field of type 'WebhookEventStatus[]'
  */
-export type ListEnumPaymentProviderCodeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentProviderCode[]'>
+export type ListEnumWebhookEventStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'WebhookEventStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'RiskEventType'
+ */
+export type EnumRiskEventTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RiskEventType'>
+    
+
+
+/**
+ * Reference to a field of type 'RiskEventType[]'
+ */
+export type ListEnumRiskEventTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RiskEventType[]'>
     
 
 
@@ -3157,6 +3400,8 @@ export type GlobalOmitConfig = {
   advertiserWallet?: Prisma.AdvertiserWalletOmit
   advertiserLedgerTransaction?: Prisma.AdvertiserLedgerTransactionOmit
   campaignFunding?: Prisma.CampaignFundingOmit
+  webhookEvent?: Prisma.WebhookEventOmit
+  riskEvent?: Prisma.RiskEventOmit
 }
 
 /* Types for Logging */

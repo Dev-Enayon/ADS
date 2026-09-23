@@ -7,6 +7,14 @@ export const env = {
   emailTransport: process.env.EMAIL_TRANSPORT ?? "log",
   nodeEnv: process.env.NODE_ENV ?? "development",
   appUrl: process.env.APP_URL ?? "http://localhost:3000",
+  // Part 3: payment/payout driver selection + webhook signing
+  paymentProvider: process.env.PAYMENT_PROVIDER ?? "DEV_MOCK",
+  payoutProvider: process.env.PAYOUT_PROVIDER ?? "MANUAL",
+  paymentWebhookSecret: process.env.PAYMENT_WEBHOOK_SECRET ?? "",
+  payoutWebhookSecret: process.env.PAYOUT_WEBHOOK_SECRET ?? "",
+  // Optional bootstrap super admin (idempotent, set once at deploy time).
+  bootstrapAdminEmail: process.env.BOOTSTRAP_ADMIN_EMAIL ?? "",
+  bootstrapAdminPassword: process.env.BOOTSTRAP_ADMIN_PASSWORD ?? "",
 };
 
 export const isProd = env.nodeEnv === "production";

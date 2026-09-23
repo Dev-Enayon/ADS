@@ -40,7 +40,7 @@ export type UserMinAggregateOutputType = {
   emailVerifiedAt: Date | null
   passwordHash: string | null
   status: $Enums.UserStatus | null
-  role: string | null
+  role: $Enums.UserRole | null
   referralCode: string | null
   referredById: string | null
   failedLoginAttempts: number | null
@@ -57,7 +57,7 @@ export type UserMaxAggregateOutputType = {
   emailVerifiedAt: Date | null
   passwordHash: string | null
   status: $Enums.UserStatus | null
-  role: string | null
+  role: $Enums.UserRole | null
   referralCode: string | null
   referredById: string | null
   failedLoginAttempts: number | null
@@ -239,7 +239,7 @@ export type UserGroupByOutputType = {
   emailVerifiedAt: Date | null
   passwordHash: string
   status: $Enums.UserStatus
-  role: string
+  role: $Enums.UserRole
   referralCode: string
   referredById: string | null
   failedLoginAttempts: number
@@ -279,7 +279,7 @@ export type UserWhereInput = {
   emailVerifiedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   passwordHash?: Prisma.StringFilter<"User"> | string
   status?: Prisma.EnumUserStatusFilter<"User"> | $Enums.UserStatus
-  role?: Prisma.StringFilter<"User"> | string
+  role?: Prisma.EnumUserRoleFilter<"User"> | $Enums.UserRole
   referralCode?: Prisma.StringFilter<"User"> | string
   referredById?: Prisma.StringNullableFilter<"User"> | string | null
   failedLoginAttempts?: Prisma.IntFilter<"User"> | number
@@ -308,6 +308,9 @@ export type UserWhereInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberListRelationFilter
   reviewedCampaigns?: Prisma.CampaignListRelationFilter
   reviewedAdvertisers?: Prisma.AdvertiserProfileListRelationFilter
+  processedWithdrawals?: Prisma.WithdrawalListRelationFilter
+  resolvedRiskEvents?: Prisma.RiskEventListRelationFilter
+  riskEvents?: Prisma.RiskEventListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -345,6 +348,9 @@ export type UserOrderByWithRelationInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberOrderByRelationAggregateInput
   reviewedCampaigns?: Prisma.CampaignOrderByRelationAggregateInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileOrderByRelationAggregateInput
+  processedWithdrawals?: Prisma.WithdrawalOrderByRelationAggregateInput
+  resolvedRiskEvents?: Prisma.RiskEventOrderByRelationAggregateInput
+  riskEvents?: Prisma.RiskEventOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -357,7 +363,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   emailVerifiedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   passwordHash?: Prisma.StringFilter<"User"> | string
   status?: Prisma.EnumUserStatusFilter<"User"> | $Enums.UserStatus
-  role?: Prisma.StringFilter<"User"> | string
+  role?: Prisma.EnumUserRoleFilter<"User"> | $Enums.UserRole
   referredById?: Prisma.StringNullableFilter<"User"> | string | null
   failedLoginAttempts?: Prisma.IntFilter<"User"> | number
   lockedUntil?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
@@ -385,6 +391,9 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   advertiserMemberships?: Prisma.AdvertiserMemberListRelationFilter
   reviewedCampaigns?: Prisma.CampaignListRelationFilter
   reviewedAdvertisers?: Prisma.AdvertiserProfileListRelationFilter
+  processedWithdrawals?: Prisma.WithdrawalListRelationFilter
+  resolvedRiskEvents?: Prisma.RiskEventListRelationFilter
+  riskEvents?: Prisma.RiskEventListRelationFilter
 }, "id" | "email" | "referralCode">
 
 export type UserOrderByWithAggregationInput = {
@@ -418,7 +427,7 @@ export type UserScalarWhereWithAggregatesInput = {
   emailVerifiedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   passwordHash?: Prisma.StringWithAggregatesFilter<"User"> | string
   status?: Prisma.EnumUserStatusWithAggregatesFilter<"User"> | $Enums.UserStatus
-  role?: Prisma.StringWithAggregatesFilter<"User"> | string
+  role?: Prisma.EnumUserRoleWithAggregatesFilter<"User"> | $Enums.UserRole
   referralCode?: Prisma.StringWithAggregatesFilter<"User"> | string
   referredById?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   failedLoginAttempts?: Prisma.IntWithAggregatesFilter<"User"> | number
@@ -435,7 +444,7 @@ export type UserCreateInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   failedLoginAttempts?: number
   lockedUntil?: Date | string | null
@@ -463,6 +472,9 @@ export type UserCreateInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberCreateNestedManyWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignCreateNestedManyWithoutReviewedByInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -471,7 +483,7 @@ export type UserUncheckedCreateInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   referredById?: string | null
   failedLoginAttempts?: number
@@ -499,6 +511,9 @@ export type UserUncheckedCreateInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedCreateNestedManyWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignUncheckedCreateNestedManyWithoutReviewedByInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -507,7 +522,7 @@ export type UserUpdateInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -535,6 +550,9 @@ export type UserUpdateInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUpdateManyWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUpdateManyWithoutReviewedByNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -543,7 +561,7 @@ export type UserUncheckedUpdateInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
@@ -571,6 +589,9 @@ export type UserUncheckedUpdateInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedUpdateManyWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUncheckedUpdateManyWithoutReviewedByNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -579,7 +600,7 @@ export type UserCreateManyInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   referredById?: string | null
   failedLoginAttempts?: number
@@ -596,7 +617,7 @@ export type UserUpdateManyMutationInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -612,7 +633,7 @@ export type UserUncheckedUpdateManyInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
@@ -732,6 +753,10 @@ export type NullableDateTimeFieldUpdateOperationsInput = {
 
 export type EnumUserStatusFieldUpdateOperationsInput = {
   set?: $Enums.UserStatus
+}
+
+export type EnumUserRoleFieldUpdateOperationsInput = {
+  set?: $Enums.UserRole
 }
 
 export type IntFieldUpdateOperationsInput = {
@@ -858,10 +883,26 @@ export type UserUpdateOneRequiredWithoutRewardsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutRewardsInput, Prisma.UserUpdateWithoutRewardsInput>, Prisma.UserUncheckedUpdateWithoutRewardsInput>
 }
 
+export type UserCreateNestedOneWithoutProcessedWithdrawalsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutProcessedWithdrawalsInput, Prisma.UserUncheckedCreateWithoutProcessedWithdrawalsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutProcessedWithdrawalsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
 export type UserCreateNestedOneWithoutWithdrawalsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutWithdrawalsInput, Prisma.UserUncheckedCreateWithoutWithdrawalsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutWithdrawalsInput
   connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutProcessedWithdrawalsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutProcessedWithdrawalsInput, Prisma.UserUncheckedCreateWithoutProcessedWithdrawalsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutProcessedWithdrawalsInput
+  upsert?: Prisma.UserUpsertWithoutProcessedWithdrawalsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutProcessedWithdrawalsInput, Prisma.UserUpdateWithoutProcessedWithdrawalsInput>, Prisma.UserUncheckedUpdateWithoutProcessedWithdrawalsInput>
 }
 
 export type UserUpdateOneRequiredWithoutWithdrawalsNestedInput = {
@@ -1046,13 +1087,43 @@ export type UserUpdateOneWithoutReviewedCampaignsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutReviewedCampaignsInput, Prisma.UserUpdateWithoutReviewedCampaignsInput>, Prisma.UserUncheckedUpdateWithoutReviewedCampaignsInput>
 }
 
+export type UserCreateNestedOneWithoutResolvedRiskEventsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutResolvedRiskEventsInput, Prisma.UserUncheckedCreateWithoutResolvedRiskEventsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutResolvedRiskEventsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutRiskEventsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutRiskEventsInput, Prisma.UserUncheckedCreateWithoutRiskEventsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutRiskEventsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutResolvedRiskEventsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutResolvedRiskEventsInput, Prisma.UserUncheckedCreateWithoutResolvedRiskEventsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutResolvedRiskEventsInput
+  upsert?: Prisma.UserUpsertWithoutResolvedRiskEventsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutResolvedRiskEventsInput, Prisma.UserUpdateWithoutResolvedRiskEventsInput>, Prisma.UserUncheckedUpdateWithoutResolvedRiskEventsInput>
+}
+
+export type UserUpdateOneRequiredWithoutRiskEventsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutRiskEventsInput, Prisma.UserUncheckedCreateWithoutRiskEventsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutRiskEventsInput
+  upsert?: Prisma.UserUpsertWithoutRiskEventsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutRiskEventsInput, Prisma.UserUpdateWithoutRiskEventsInput>, Prisma.UserUncheckedUpdateWithoutRiskEventsInput>
+}
+
 export type UserCreateWithoutReferredUsersInput = {
   id?: string
   email: string
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   failedLoginAttempts?: number
   lockedUntil?: Date | string | null
@@ -1079,6 +1150,9 @@ export type UserCreateWithoutReferredUsersInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberCreateNestedManyWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignCreateNestedManyWithoutReviewedByInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReferredUsersInput = {
@@ -1087,7 +1161,7 @@ export type UserUncheckedCreateWithoutReferredUsersInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   referredById?: string | null
   failedLoginAttempts?: number
@@ -1114,6 +1188,9 @@ export type UserUncheckedCreateWithoutReferredUsersInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedCreateNestedManyWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignUncheckedCreateNestedManyWithoutReviewedByInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutReferredUsersInput = {
@@ -1127,7 +1204,7 @@ export type UserCreateWithoutReferredByInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   failedLoginAttempts?: number
   lockedUntil?: Date | string | null
@@ -1154,6 +1231,9 @@ export type UserCreateWithoutReferredByInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberCreateNestedManyWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignCreateNestedManyWithoutReviewedByInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReferredByInput = {
@@ -1162,7 +1242,7 @@ export type UserUncheckedCreateWithoutReferredByInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   failedLoginAttempts?: number
   lockedUntil?: Date | string | null
@@ -1189,6 +1269,9 @@ export type UserUncheckedCreateWithoutReferredByInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedCreateNestedManyWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignUncheckedCreateNestedManyWithoutReviewedByInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutReferredByInput = {
@@ -1218,7 +1301,7 @@ export type UserUpdateWithoutReferredUsersInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1245,6 +1328,9 @@ export type UserUpdateWithoutReferredUsersInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUpdateManyWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUpdateManyWithoutReviewedByNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReferredUsersInput = {
@@ -1253,7 +1339,7 @@ export type UserUncheckedUpdateWithoutReferredUsersInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1280,6 +1366,9 @@ export type UserUncheckedUpdateWithoutReferredUsersInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedUpdateManyWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUncheckedUpdateManyWithoutReviewedByNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithWhereUniqueWithoutReferredByInput = {
@@ -1307,7 +1396,7 @@ export type UserScalarWhereInput = {
   emailVerifiedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   passwordHash?: Prisma.StringFilter<"User"> | string
   status?: Prisma.EnumUserStatusFilter<"User"> | $Enums.UserStatus
-  role?: Prisma.StringFilter<"User"> | string
+  role?: Prisma.EnumUserRoleFilter<"User"> | $Enums.UserRole
   referralCode?: Prisma.StringFilter<"User"> | string
   referredById?: Prisma.StringNullableFilter<"User"> | string | null
   failedLoginAttempts?: Prisma.IntFilter<"User"> | number
@@ -1324,7 +1413,7 @@ export type UserCreateWithoutProfileInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   failedLoginAttempts?: number
   lockedUntil?: Date | string | null
@@ -1351,6 +1440,9 @@ export type UserCreateWithoutProfileInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberCreateNestedManyWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignCreateNestedManyWithoutReviewedByInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutProfileInput = {
@@ -1359,7 +1451,7 @@ export type UserUncheckedCreateWithoutProfileInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   referredById?: string | null
   failedLoginAttempts?: number
@@ -1386,6 +1478,9 @@ export type UserUncheckedCreateWithoutProfileInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedCreateNestedManyWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignUncheckedCreateNestedManyWithoutReviewedByInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutProfileInput = {
@@ -1410,7 +1505,7 @@ export type UserUpdateWithoutProfileInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1437,6 +1532,9 @@ export type UserUpdateWithoutProfileInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUpdateManyWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUpdateManyWithoutReviewedByNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutProfileInput = {
@@ -1445,7 +1543,7 @@ export type UserUncheckedUpdateWithoutProfileInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1472,6 +1570,9 @@ export type UserUncheckedUpdateWithoutProfileInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedUpdateManyWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUncheckedUpdateManyWithoutReviewedByNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutWalletInput = {
@@ -1480,7 +1581,7 @@ export type UserCreateWithoutWalletInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   failedLoginAttempts?: number
   lockedUntil?: Date | string | null
@@ -1507,6 +1608,9 @@ export type UserCreateWithoutWalletInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberCreateNestedManyWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignCreateNestedManyWithoutReviewedByInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutWalletInput = {
@@ -1515,7 +1619,7 @@ export type UserUncheckedCreateWithoutWalletInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   referredById?: string | null
   failedLoginAttempts?: number
@@ -1542,6 +1646,9 @@ export type UserUncheckedCreateWithoutWalletInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedCreateNestedManyWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignUncheckedCreateNestedManyWithoutReviewedByInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutWalletInput = {
@@ -1566,7 +1673,7 @@ export type UserUpdateWithoutWalletInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1593,6 +1700,9 @@ export type UserUpdateWithoutWalletInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUpdateManyWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUpdateManyWithoutReviewedByNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutWalletInput = {
@@ -1601,7 +1711,7 @@ export type UserUncheckedUpdateWithoutWalletInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1628,6 +1738,9 @@ export type UserUncheckedUpdateWithoutWalletInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedUpdateManyWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUncheckedUpdateManyWithoutReviewedByNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutLedgerTransactionsInput = {
@@ -1636,7 +1749,7 @@ export type UserCreateWithoutLedgerTransactionsInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   failedLoginAttempts?: number
   lockedUntil?: Date | string | null
@@ -1663,6 +1776,9 @@ export type UserCreateWithoutLedgerTransactionsInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberCreateNestedManyWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignCreateNestedManyWithoutReviewedByInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutLedgerTransactionsInput = {
@@ -1671,7 +1787,7 @@ export type UserUncheckedCreateWithoutLedgerTransactionsInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   referredById?: string | null
   failedLoginAttempts?: number
@@ -1698,6 +1814,9 @@ export type UserUncheckedCreateWithoutLedgerTransactionsInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedCreateNestedManyWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignUncheckedCreateNestedManyWithoutReviewedByInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutLedgerTransactionsInput = {
@@ -1722,7 +1841,7 @@ export type UserUpdateWithoutLedgerTransactionsInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1749,6 +1868,9 @@ export type UserUpdateWithoutLedgerTransactionsInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUpdateManyWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUpdateManyWithoutReviewedByNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutLedgerTransactionsInput = {
@@ -1757,7 +1879,7 @@ export type UserUncheckedUpdateWithoutLedgerTransactionsInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1784,6 +1906,9 @@ export type UserUncheckedUpdateWithoutLedgerTransactionsInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedUpdateManyWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUncheckedUpdateManyWithoutReviewedByNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutWatchSessionsInput = {
@@ -1792,7 +1917,7 @@ export type UserCreateWithoutWatchSessionsInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   failedLoginAttempts?: number
   lockedUntil?: Date | string | null
@@ -1819,6 +1944,9 @@ export type UserCreateWithoutWatchSessionsInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberCreateNestedManyWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignCreateNestedManyWithoutReviewedByInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutWatchSessionsInput = {
@@ -1827,7 +1955,7 @@ export type UserUncheckedCreateWithoutWatchSessionsInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   referredById?: string | null
   failedLoginAttempts?: number
@@ -1854,6 +1982,9 @@ export type UserUncheckedCreateWithoutWatchSessionsInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedCreateNestedManyWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignUncheckedCreateNestedManyWithoutReviewedByInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutWatchSessionsInput = {
@@ -1878,7 +2009,7 @@ export type UserUpdateWithoutWatchSessionsInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1905,6 +2036,9 @@ export type UserUpdateWithoutWatchSessionsInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUpdateManyWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUpdateManyWithoutReviewedByNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutWatchSessionsInput = {
@@ -1913,7 +2047,7 @@ export type UserUncheckedUpdateWithoutWatchSessionsInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1940,6 +2074,9 @@ export type UserUncheckedUpdateWithoutWatchSessionsInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedUpdateManyWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUncheckedUpdateManyWithoutReviewedByNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutRewardsInput = {
@@ -1948,7 +2085,7 @@ export type UserCreateWithoutRewardsInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   failedLoginAttempts?: number
   lockedUntil?: Date | string | null
@@ -1975,6 +2112,9 @@ export type UserCreateWithoutRewardsInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberCreateNestedManyWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignCreateNestedManyWithoutReviewedByInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutRewardsInput = {
@@ -1983,7 +2123,7 @@ export type UserUncheckedCreateWithoutRewardsInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   referredById?: string | null
   failedLoginAttempts?: number
@@ -2010,6 +2150,9 @@ export type UserUncheckedCreateWithoutRewardsInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedCreateNestedManyWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignUncheckedCreateNestedManyWithoutReviewedByInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutRewardsInput = {
@@ -2034,7 +2177,7 @@ export type UserUpdateWithoutRewardsInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2061,6 +2204,9 @@ export type UserUpdateWithoutRewardsInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUpdateManyWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUpdateManyWithoutReviewedByNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRewardsInput = {
@@ -2069,7 +2215,7 @@ export type UserUncheckedUpdateWithoutRewardsInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2096,6 +2242,90 @@ export type UserUncheckedUpdateWithoutRewardsInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedUpdateManyWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUncheckedUpdateManyWithoutReviewedByNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutProcessedWithdrawalsInput = {
+  id?: string
+  email: string
+  emailVerifiedAt?: Date | string | null
+  passwordHash: string
+  status?: $Enums.UserStatus
+  role?: $Enums.UserRole
+  referralCode: string
+  failedLoginAttempts?: number
+  lockedUntil?: Date | string | null
+  passwordChangedAt?: Date | string | null
+  lastLoginAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referredBy?: Prisma.UserCreateNestedOneWithoutReferredUsersInput
+  referredUsers?: Prisma.UserCreateNestedManyWithoutReferredByInput
+  profile?: Prisma.ProfileCreateNestedOneWithoutUserInput
+  wallet?: Prisma.WalletCreateNestedOneWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  devices?: Prisma.DeviceCreateNestedManyWithoutUserInput
+  watchSessions?: Prisma.WatchSessionCreateNestedManyWithoutUserInput
+  rewards?: Prisma.RewardCreateNestedManyWithoutUserInput
+  ledgerTransactions?: Prisma.LedgerTransactionCreateNestedManyWithoutUserInput
+  withdrawals?: Prisma.WithdrawalCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  referralsGiven?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
+  referralReceived?: Prisma.ReferralCreateNestedOneWithoutReferredUserInput
+  advertiserProfile?: Prisma.AdvertiserProfileCreateNestedOneWithoutUserInput
+  advertiserMemberships?: Prisma.AdvertiserMemberCreateNestedManyWithoutUserInput
+  reviewedCampaigns?: Prisma.CampaignCreateNestedManyWithoutReviewedByInput
+  reviewedAdvertisers?: Prisma.AdvertiserProfileCreateNestedManyWithoutReviewedByInput
+  resolvedRiskEvents?: Prisma.RiskEventCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutProcessedWithdrawalsInput = {
+  id?: string
+  email: string
+  emailVerifiedAt?: Date | string | null
+  passwordHash: string
+  status?: $Enums.UserStatus
+  role?: $Enums.UserRole
+  referralCode: string
+  referredById?: string | null
+  failedLoginAttempts?: number
+  lockedUntil?: Date | string | null
+  passwordChangedAt?: Date | string | null
+  lastLoginAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referredUsers?: Prisma.UserUncheckedCreateNestedManyWithoutReferredByInput
+  profile?: Prisma.ProfileUncheckedCreateNestedOneWithoutUserInput
+  wallet?: Prisma.WalletUncheckedCreateNestedOneWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  devices?: Prisma.DeviceUncheckedCreateNestedManyWithoutUserInput
+  watchSessions?: Prisma.WatchSessionUncheckedCreateNestedManyWithoutUserInput
+  rewards?: Prisma.RewardUncheckedCreateNestedManyWithoutUserInput
+  ledgerTransactions?: Prisma.LedgerTransactionUncheckedCreateNestedManyWithoutUserInput
+  withdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationUncheckedCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  referralsGiven?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
+  referralReceived?: Prisma.ReferralUncheckedCreateNestedOneWithoutReferredUserInput
+  advertiserProfile?: Prisma.AdvertiserProfileUncheckedCreateNestedOneWithoutUserInput
+  advertiserMemberships?: Prisma.AdvertiserMemberUncheckedCreateNestedManyWithoutUserInput
+  reviewedCampaigns?: Prisma.CampaignUncheckedCreateNestedManyWithoutReviewedByInput
+  reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedCreateNestedManyWithoutReviewedByInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutProcessedWithdrawalsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutProcessedWithdrawalsInput, Prisma.UserUncheckedCreateWithoutProcessedWithdrawalsInput>
 }
 
 export type UserCreateWithoutWithdrawalsInput = {
@@ -2104,7 +2334,7 @@ export type UserCreateWithoutWithdrawalsInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   failedLoginAttempts?: number
   lockedUntil?: Date | string | null
@@ -2131,6 +2361,9 @@ export type UserCreateWithoutWithdrawalsInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberCreateNestedManyWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignCreateNestedManyWithoutReviewedByInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutWithdrawalsInput = {
@@ -2139,7 +2372,7 @@ export type UserUncheckedCreateWithoutWithdrawalsInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   referredById?: string | null
   failedLoginAttempts?: number
@@ -2166,11 +2399,101 @@ export type UserUncheckedCreateWithoutWithdrawalsInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedCreateNestedManyWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignUncheckedCreateNestedManyWithoutReviewedByInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutWithdrawalsInput = {
   where: Prisma.UserWhereUniqueInput
   create: Prisma.XOR<Prisma.UserCreateWithoutWithdrawalsInput, Prisma.UserUncheckedCreateWithoutWithdrawalsInput>
+}
+
+export type UserUpsertWithoutProcessedWithdrawalsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutProcessedWithdrawalsInput, Prisma.UserUncheckedUpdateWithoutProcessedWithdrawalsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutProcessedWithdrawalsInput, Prisma.UserUncheckedCreateWithoutProcessedWithdrawalsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutProcessedWithdrawalsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutProcessedWithdrawalsInput, Prisma.UserUncheckedUpdateWithoutProcessedWithdrawalsInput>
+}
+
+export type UserUpdateWithoutProcessedWithdrawalsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referredBy?: Prisma.UserUpdateOneWithoutReferredUsersNestedInput
+  referredUsers?: Prisma.UserUpdateManyWithoutReferredByNestedInput
+  profile?: Prisma.ProfileUpdateOneWithoutUserNestedInput
+  wallet?: Prisma.WalletUpdateOneWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  devices?: Prisma.DeviceUpdateManyWithoutUserNestedInput
+  watchSessions?: Prisma.WatchSessionUpdateManyWithoutUserNestedInput
+  rewards?: Prisma.RewardUpdateManyWithoutUserNestedInput
+  ledgerTransactions?: Prisma.LedgerTransactionUpdateManyWithoutUserNestedInput
+  withdrawals?: Prisma.WithdrawalUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  referralsGiven?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
+  referralReceived?: Prisma.ReferralUpdateOneWithoutReferredUserNestedInput
+  advertiserProfile?: Prisma.AdvertiserProfileUpdateOneWithoutUserNestedInput
+  advertiserMemberships?: Prisma.AdvertiserMemberUpdateManyWithoutUserNestedInput
+  reviewedCampaigns?: Prisma.CampaignUpdateManyWithoutReviewedByNestedInput
+  reviewedAdvertisers?: Prisma.AdvertiserProfileUpdateManyWithoutReviewedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutProcessedWithdrawalsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  referredById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referredUsers?: Prisma.UserUncheckedUpdateManyWithoutReferredByNestedInput
+  profile?: Prisma.ProfileUncheckedUpdateOneWithoutUserNestedInput
+  wallet?: Prisma.WalletUncheckedUpdateOneWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  devices?: Prisma.DeviceUncheckedUpdateManyWithoutUserNestedInput
+  watchSessions?: Prisma.WatchSessionUncheckedUpdateManyWithoutUserNestedInput
+  rewards?: Prisma.RewardUncheckedUpdateManyWithoutUserNestedInput
+  ledgerTransactions?: Prisma.LedgerTransactionUncheckedUpdateManyWithoutUserNestedInput
+  withdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationUncheckedUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  referralsGiven?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
+  referralReceived?: Prisma.ReferralUncheckedUpdateOneWithoutReferredUserNestedInput
+  advertiserProfile?: Prisma.AdvertiserProfileUncheckedUpdateOneWithoutUserNestedInput
+  advertiserMemberships?: Prisma.AdvertiserMemberUncheckedUpdateManyWithoutUserNestedInput
+  reviewedCampaigns?: Prisma.CampaignUncheckedUpdateManyWithoutReviewedByNestedInput
+  reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedUpdateManyWithoutReviewedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutWithdrawalsInput = {
@@ -2190,7 +2513,7 @@ export type UserUpdateWithoutWithdrawalsInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2217,6 +2540,9 @@ export type UserUpdateWithoutWithdrawalsInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUpdateManyWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUpdateManyWithoutReviewedByNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutWithdrawalsInput = {
@@ -2225,7 +2551,7 @@ export type UserUncheckedUpdateWithoutWithdrawalsInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2252,6 +2578,9 @@ export type UserUncheckedUpdateWithoutWithdrawalsInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedUpdateManyWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUncheckedUpdateManyWithoutReviewedByNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutReferralsGivenInput = {
@@ -2260,7 +2589,7 @@ export type UserCreateWithoutReferralsGivenInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   failedLoginAttempts?: number
   lockedUntil?: Date | string | null
@@ -2287,6 +2616,9 @@ export type UserCreateWithoutReferralsGivenInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberCreateNestedManyWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignCreateNestedManyWithoutReviewedByInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReferralsGivenInput = {
@@ -2295,7 +2627,7 @@ export type UserUncheckedCreateWithoutReferralsGivenInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   referredById?: string | null
   failedLoginAttempts?: number
@@ -2322,6 +2654,9 @@ export type UserUncheckedCreateWithoutReferralsGivenInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedCreateNestedManyWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignUncheckedCreateNestedManyWithoutReviewedByInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutReferralsGivenInput = {
@@ -2335,7 +2670,7 @@ export type UserCreateWithoutReferralReceivedInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   failedLoginAttempts?: number
   lockedUntil?: Date | string | null
@@ -2362,6 +2697,9 @@ export type UserCreateWithoutReferralReceivedInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberCreateNestedManyWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignCreateNestedManyWithoutReviewedByInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReferralReceivedInput = {
@@ -2370,7 +2708,7 @@ export type UserUncheckedCreateWithoutReferralReceivedInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   referredById?: string | null
   failedLoginAttempts?: number
@@ -2397,6 +2735,9 @@ export type UserUncheckedCreateWithoutReferralReceivedInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedCreateNestedManyWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignUncheckedCreateNestedManyWithoutReviewedByInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutReferralReceivedInput = {
@@ -2421,7 +2762,7 @@ export type UserUpdateWithoutReferralsGivenInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2448,6 +2789,9 @@ export type UserUpdateWithoutReferralsGivenInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUpdateManyWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUpdateManyWithoutReviewedByNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReferralsGivenInput = {
@@ -2456,7 +2800,7 @@ export type UserUncheckedUpdateWithoutReferralsGivenInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2483,6 +2827,9 @@ export type UserUncheckedUpdateWithoutReferralsGivenInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedUpdateManyWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUncheckedUpdateManyWithoutReviewedByNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutReferralReceivedInput = {
@@ -2502,7 +2849,7 @@ export type UserUpdateWithoutReferralReceivedInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2529,6 +2876,9 @@ export type UserUpdateWithoutReferralReceivedInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUpdateManyWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUpdateManyWithoutReviewedByNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReferralReceivedInput = {
@@ -2537,7 +2887,7 @@ export type UserUncheckedUpdateWithoutReferralReceivedInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2564,6 +2914,9 @@ export type UserUncheckedUpdateWithoutReferralReceivedInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedUpdateManyWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUncheckedUpdateManyWithoutReviewedByNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutNotificationsInput = {
@@ -2572,7 +2925,7 @@ export type UserCreateWithoutNotificationsInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   failedLoginAttempts?: number
   lockedUntil?: Date | string | null
@@ -2599,6 +2952,9 @@ export type UserCreateWithoutNotificationsInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberCreateNestedManyWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignCreateNestedManyWithoutReviewedByInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -2607,7 +2963,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   referredById?: string | null
   failedLoginAttempts?: number
@@ -2634,6 +2990,9 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedCreateNestedManyWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignUncheckedCreateNestedManyWithoutReviewedByInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -2658,7 +3017,7 @@ export type UserUpdateWithoutNotificationsInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2685,6 +3044,9 @@ export type UserUpdateWithoutNotificationsInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUpdateManyWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUpdateManyWithoutReviewedByNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -2693,7 +3055,7 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2720,6 +3082,9 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedUpdateManyWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUncheckedUpdateManyWithoutReviewedByNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
@@ -2728,7 +3093,7 @@ export type UserCreateWithoutSessionsInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   failedLoginAttempts?: number
   lockedUntil?: Date | string | null
@@ -2755,6 +3120,9 @@ export type UserCreateWithoutSessionsInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberCreateNestedManyWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignCreateNestedManyWithoutReviewedByInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -2763,7 +3131,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   referredById?: string | null
   failedLoginAttempts?: number
@@ -2790,6 +3158,9 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedCreateNestedManyWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignUncheckedCreateNestedManyWithoutReviewedByInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -2814,7 +3185,7 @@ export type UserUpdateWithoutSessionsInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2841,6 +3212,9 @@ export type UserUpdateWithoutSessionsInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUpdateManyWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUpdateManyWithoutReviewedByNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -2849,7 +3223,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2876,6 +3250,9 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedUpdateManyWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUncheckedUpdateManyWithoutReviewedByNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutDevicesInput = {
@@ -2884,7 +3261,7 @@ export type UserCreateWithoutDevicesInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   failedLoginAttempts?: number
   lockedUntil?: Date | string | null
@@ -2911,6 +3288,9 @@ export type UserCreateWithoutDevicesInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberCreateNestedManyWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignCreateNestedManyWithoutReviewedByInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutDevicesInput = {
@@ -2919,7 +3299,7 @@ export type UserUncheckedCreateWithoutDevicesInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   referredById?: string | null
   failedLoginAttempts?: number
@@ -2946,6 +3326,9 @@ export type UserUncheckedCreateWithoutDevicesInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedCreateNestedManyWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignUncheckedCreateNestedManyWithoutReviewedByInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutDevicesInput = {
@@ -2970,7 +3353,7 @@ export type UserUpdateWithoutDevicesInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2997,6 +3380,9 @@ export type UserUpdateWithoutDevicesInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUpdateManyWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUpdateManyWithoutReviewedByNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDevicesInput = {
@@ -3005,7 +3391,7 @@ export type UserUncheckedUpdateWithoutDevicesInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
@@ -3032,6 +3418,9 @@ export type UserUncheckedUpdateWithoutDevicesInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedUpdateManyWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUncheckedUpdateManyWithoutReviewedByNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutEmailVerificationsInput = {
@@ -3040,7 +3429,7 @@ export type UserCreateWithoutEmailVerificationsInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   failedLoginAttempts?: number
   lockedUntil?: Date | string | null
@@ -3067,6 +3456,9 @@ export type UserCreateWithoutEmailVerificationsInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberCreateNestedManyWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignCreateNestedManyWithoutReviewedByInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutEmailVerificationsInput = {
@@ -3075,7 +3467,7 @@ export type UserUncheckedCreateWithoutEmailVerificationsInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   referredById?: string | null
   failedLoginAttempts?: number
@@ -3102,6 +3494,9 @@ export type UserUncheckedCreateWithoutEmailVerificationsInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedCreateNestedManyWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignUncheckedCreateNestedManyWithoutReviewedByInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutEmailVerificationsInput = {
@@ -3126,7 +3521,7 @@ export type UserUpdateWithoutEmailVerificationsInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3153,6 +3548,9 @@ export type UserUpdateWithoutEmailVerificationsInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUpdateManyWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUpdateManyWithoutReviewedByNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutEmailVerificationsInput = {
@@ -3161,7 +3559,7 @@ export type UserUncheckedUpdateWithoutEmailVerificationsInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
@@ -3188,6 +3586,9 @@ export type UserUncheckedUpdateWithoutEmailVerificationsInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedUpdateManyWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUncheckedUpdateManyWithoutReviewedByNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPasswordResetsInput = {
@@ -3196,7 +3597,7 @@ export type UserCreateWithoutPasswordResetsInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   failedLoginAttempts?: number
   lockedUntil?: Date | string | null
@@ -3223,6 +3624,9 @@ export type UserCreateWithoutPasswordResetsInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberCreateNestedManyWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignCreateNestedManyWithoutReviewedByInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPasswordResetsInput = {
@@ -3231,7 +3635,7 @@ export type UserUncheckedCreateWithoutPasswordResetsInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   referredById?: string | null
   failedLoginAttempts?: number
@@ -3258,6 +3662,9 @@ export type UserUncheckedCreateWithoutPasswordResetsInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedCreateNestedManyWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignUncheckedCreateNestedManyWithoutReviewedByInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPasswordResetsInput = {
@@ -3282,7 +3689,7 @@ export type UserUpdateWithoutPasswordResetsInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3309,6 +3716,9 @@ export type UserUpdateWithoutPasswordResetsInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUpdateManyWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUpdateManyWithoutReviewedByNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPasswordResetsInput = {
@@ -3317,7 +3727,7 @@ export type UserUncheckedUpdateWithoutPasswordResetsInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
@@ -3344,6 +3754,9 @@ export type UserUncheckedUpdateWithoutPasswordResetsInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedUpdateManyWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUncheckedUpdateManyWithoutReviewedByNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAuditLogsInput = {
@@ -3352,7 +3765,7 @@ export type UserCreateWithoutAuditLogsInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   failedLoginAttempts?: number
   lockedUntil?: Date | string | null
@@ -3379,6 +3792,9 @@ export type UserCreateWithoutAuditLogsInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberCreateNestedManyWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignCreateNestedManyWithoutReviewedByInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAuditLogsInput = {
@@ -3387,7 +3803,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   referredById?: string | null
   failedLoginAttempts?: number
@@ -3414,6 +3830,9 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedCreateNestedManyWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignUncheckedCreateNestedManyWithoutReviewedByInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAuditLogsInput = {
@@ -3438,7 +3857,7 @@ export type UserUpdateWithoutAuditLogsInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3465,6 +3884,9 @@ export type UserUpdateWithoutAuditLogsInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUpdateManyWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUpdateManyWithoutReviewedByNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAuditLogsInput = {
@@ -3473,7 +3895,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
@@ -3500,6 +3922,9 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedUpdateManyWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUncheckedUpdateManyWithoutReviewedByNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutReviewedAdvertisersInput = {
@@ -3508,7 +3933,7 @@ export type UserCreateWithoutReviewedAdvertisersInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   failedLoginAttempts?: number
   lockedUntil?: Date | string | null
@@ -3535,6 +3960,9 @@ export type UserCreateWithoutReviewedAdvertisersInput = {
   advertiserProfile?: Prisma.AdvertiserProfileCreateNestedOneWithoutUserInput
   advertiserMemberships?: Prisma.AdvertiserMemberCreateNestedManyWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReviewedAdvertisersInput = {
@@ -3543,7 +3971,7 @@ export type UserUncheckedCreateWithoutReviewedAdvertisersInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   referredById?: string | null
   failedLoginAttempts?: number
@@ -3570,6 +3998,9 @@ export type UserUncheckedCreateWithoutReviewedAdvertisersInput = {
   advertiserProfile?: Prisma.AdvertiserProfileUncheckedCreateNestedOneWithoutUserInput
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedCreateNestedManyWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignUncheckedCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutReviewedAdvertisersInput = {
@@ -3583,7 +4014,7 @@ export type UserCreateWithoutAdvertiserProfileInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   failedLoginAttempts?: number
   lockedUntil?: Date | string | null
@@ -3610,6 +4041,9 @@ export type UserCreateWithoutAdvertiserProfileInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberCreateNestedManyWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignCreateNestedManyWithoutReviewedByInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAdvertiserProfileInput = {
@@ -3618,7 +4052,7 @@ export type UserUncheckedCreateWithoutAdvertiserProfileInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   referredById?: string | null
   failedLoginAttempts?: number
@@ -3645,6 +4079,9 @@ export type UserUncheckedCreateWithoutAdvertiserProfileInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedCreateNestedManyWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignUncheckedCreateNestedManyWithoutReviewedByInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAdvertiserProfileInput = {
@@ -3669,7 +4106,7 @@ export type UserUpdateWithoutReviewedAdvertisersInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3696,6 +4133,9 @@ export type UserUpdateWithoutReviewedAdvertisersInput = {
   advertiserProfile?: Prisma.AdvertiserProfileUpdateOneWithoutUserNestedInput
   advertiserMemberships?: Prisma.AdvertiserMemberUpdateManyWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReviewedAdvertisersInput = {
@@ -3704,7 +4144,7 @@ export type UserUncheckedUpdateWithoutReviewedAdvertisersInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
@@ -3731,6 +4171,9 @@ export type UserUncheckedUpdateWithoutReviewedAdvertisersInput = {
   advertiserProfile?: Prisma.AdvertiserProfileUncheckedUpdateOneWithoutUserNestedInput
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedUpdateManyWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUncheckedUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutAdvertiserProfileInput = {
@@ -3750,7 +4193,7 @@ export type UserUpdateWithoutAdvertiserProfileInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3777,6 +4220,9 @@ export type UserUpdateWithoutAdvertiserProfileInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUpdateManyWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUpdateManyWithoutReviewedByNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAdvertiserProfileInput = {
@@ -3785,7 +4231,7 @@ export type UserUncheckedUpdateWithoutAdvertiserProfileInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
@@ -3812,6 +4258,9 @@ export type UserUncheckedUpdateWithoutAdvertiserProfileInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedUpdateManyWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUncheckedUpdateManyWithoutReviewedByNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAdvertiserMembershipsInput = {
@@ -3820,7 +4269,7 @@ export type UserCreateWithoutAdvertiserMembershipsInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   failedLoginAttempts?: number
   lockedUntil?: Date | string | null
@@ -3847,6 +4296,9 @@ export type UserCreateWithoutAdvertiserMembershipsInput = {
   advertiserProfile?: Prisma.AdvertiserProfileCreateNestedOneWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignCreateNestedManyWithoutReviewedByInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAdvertiserMembershipsInput = {
@@ -3855,7 +4307,7 @@ export type UserUncheckedCreateWithoutAdvertiserMembershipsInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   referredById?: string | null
   failedLoginAttempts?: number
@@ -3882,6 +4334,9 @@ export type UserUncheckedCreateWithoutAdvertiserMembershipsInput = {
   advertiserProfile?: Prisma.AdvertiserProfileUncheckedCreateNestedOneWithoutUserInput
   reviewedCampaigns?: Prisma.CampaignUncheckedCreateNestedManyWithoutReviewedByInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAdvertiserMembershipsInput = {
@@ -3906,7 +4361,7 @@ export type UserUpdateWithoutAdvertiserMembershipsInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3933,6 +4388,9 @@ export type UserUpdateWithoutAdvertiserMembershipsInput = {
   advertiserProfile?: Prisma.AdvertiserProfileUpdateOneWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUpdateManyWithoutReviewedByNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAdvertiserMembershipsInput = {
@@ -3941,7 +4399,7 @@ export type UserUncheckedUpdateWithoutAdvertiserMembershipsInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
@@ -3968,6 +4426,9 @@ export type UserUncheckedUpdateWithoutAdvertiserMembershipsInput = {
   advertiserProfile?: Prisma.AdvertiserProfileUncheckedUpdateOneWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUncheckedUpdateManyWithoutReviewedByNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutReviewedCampaignsInput = {
@@ -3976,7 +4437,7 @@ export type UserCreateWithoutReviewedCampaignsInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   failedLoginAttempts?: number
   lockedUntil?: Date | string | null
@@ -4003,6 +4464,9 @@ export type UserCreateWithoutReviewedCampaignsInput = {
   advertiserProfile?: Prisma.AdvertiserProfileCreateNestedOneWithoutUserInput
   advertiserMemberships?: Prisma.AdvertiserMemberCreateNestedManyWithoutUserInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReviewedCampaignsInput = {
@@ -4011,7 +4475,7 @@ export type UserUncheckedCreateWithoutReviewedCampaignsInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   referredById?: string | null
   failedLoginAttempts?: number
@@ -4038,6 +4502,9 @@ export type UserUncheckedCreateWithoutReviewedCampaignsInput = {
   advertiserProfile?: Prisma.AdvertiserProfileUncheckedCreateNestedOneWithoutUserInput
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedCreateNestedManyWithoutUserInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutResolvedByInput
+  riskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutReviewedCampaignsInput = {
@@ -4062,7 +4529,7 @@ export type UserUpdateWithoutReviewedCampaignsInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4089,6 +4556,9 @@ export type UserUpdateWithoutReviewedCampaignsInput = {
   advertiserProfile?: Prisma.AdvertiserProfileUpdateOneWithoutUserNestedInput
   advertiserMemberships?: Prisma.AdvertiserMemberUpdateManyWithoutUserNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReviewedCampaignsInput = {
@@ -4097,7 +4567,7 @@ export type UserUncheckedUpdateWithoutReviewedCampaignsInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
@@ -4124,6 +4594,345 @@ export type UserUncheckedUpdateWithoutReviewedCampaignsInput = {
   advertiserProfile?: Prisma.AdvertiserProfileUncheckedUpdateOneWithoutUserNestedInput
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedUpdateManyWithoutUserNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutResolvedRiskEventsInput = {
+  id?: string
+  email: string
+  emailVerifiedAt?: Date | string | null
+  passwordHash: string
+  status?: $Enums.UserStatus
+  role?: $Enums.UserRole
+  referralCode: string
+  failedLoginAttempts?: number
+  lockedUntil?: Date | string | null
+  passwordChangedAt?: Date | string | null
+  lastLoginAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referredBy?: Prisma.UserCreateNestedOneWithoutReferredUsersInput
+  referredUsers?: Prisma.UserCreateNestedManyWithoutReferredByInput
+  profile?: Prisma.ProfileCreateNestedOneWithoutUserInput
+  wallet?: Prisma.WalletCreateNestedOneWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  devices?: Prisma.DeviceCreateNestedManyWithoutUserInput
+  watchSessions?: Prisma.WatchSessionCreateNestedManyWithoutUserInput
+  rewards?: Prisma.RewardCreateNestedManyWithoutUserInput
+  ledgerTransactions?: Prisma.LedgerTransactionCreateNestedManyWithoutUserInput
+  withdrawals?: Prisma.WithdrawalCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  referralsGiven?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
+  referralReceived?: Prisma.ReferralCreateNestedOneWithoutReferredUserInput
+  advertiserProfile?: Prisma.AdvertiserProfileCreateNestedOneWithoutUserInput
+  advertiserMemberships?: Prisma.AdvertiserMemberCreateNestedManyWithoutUserInput
+  reviewedCampaigns?: Prisma.CampaignCreateNestedManyWithoutReviewedByInput
+  reviewedAdvertisers?: Prisma.AdvertiserProfileCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalCreateNestedManyWithoutProcessedByInput
+  riskEvents?: Prisma.RiskEventCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutResolvedRiskEventsInput = {
+  id?: string
+  email: string
+  emailVerifiedAt?: Date | string | null
+  passwordHash: string
+  status?: $Enums.UserStatus
+  role?: $Enums.UserRole
+  referralCode: string
+  referredById?: string | null
+  failedLoginAttempts?: number
+  lockedUntil?: Date | string | null
+  passwordChangedAt?: Date | string | null
+  lastLoginAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referredUsers?: Prisma.UserUncheckedCreateNestedManyWithoutReferredByInput
+  profile?: Prisma.ProfileUncheckedCreateNestedOneWithoutUserInput
+  wallet?: Prisma.WalletUncheckedCreateNestedOneWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  devices?: Prisma.DeviceUncheckedCreateNestedManyWithoutUserInput
+  watchSessions?: Prisma.WatchSessionUncheckedCreateNestedManyWithoutUserInput
+  rewards?: Prisma.RewardUncheckedCreateNestedManyWithoutUserInput
+  ledgerTransactions?: Prisma.LedgerTransactionUncheckedCreateNestedManyWithoutUserInput
+  withdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationUncheckedCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  referralsGiven?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
+  referralReceived?: Prisma.ReferralUncheckedCreateNestedOneWithoutReferredUserInput
+  advertiserProfile?: Prisma.AdvertiserProfileUncheckedCreateNestedOneWithoutUserInput
+  advertiserMemberships?: Prisma.AdvertiserMemberUncheckedCreateNestedManyWithoutUserInput
+  reviewedCampaigns?: Prisma.CampaignUncheckedCreateNestedManyWithoutReviewedByInput
+  reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutProcessedByInput
+  riskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutResolvedRiskEventsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutResolvedRiskEventsInput, Prisma.UserUncheckedCreateWithoutResolvedRiskEventsInput>
+}
+
+export type UserCreateWithoutRiskEventsInput = {
+  id?: string
+  email: string
+  emailVerifiedAt?: Date | string | null
+  passwordHash: string
+  status?: $Enums.UserStatus
+  role?: $Enums.UserRole
+  referralCode: string
+  failedLoginAttempts?: number
+  lockedUntil?: Date | string | null
+  passwordChangedAt?: Date | string | null
+  lastLoginAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referredBy?: Prisma.UserCreateNestedOneWithoutReferredUsersInput
+  referredUsers?: Prisma.UserCreateNestedManyWithoutReferredByInput
+  profile?: Prisma.ProfileCreateNestedOneWithoutUserInput
+  wallet?: Prisma.WalletCreateNestedOneWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  devices?: Prisma.DeviceCreateNestedManyWithoutUserInput
+  watchSessions?: Prisma.WatchSessionCreateNestedManyWithoutUserInput
+  rewards?: Prisma.RewardCreateNestedManyWithoutUserInput
+  ledgerTransactions?: Prisma.LedgerTransactionCreateNestedManyWithoutUserInput
+  withdrawals?: Prisma.WithdrawalCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  referralsGiven?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
+  referralReceived?: Prisma.ReferralCreateNestedOneWithoutReferredUserInput
+  advertiserProfile?: Prisma.AdvertiserProfileCreateNestedOneWithoutUserInput
+  advertiserMemberships?: Prisma.AdvertiserMemberCreateNestedManyWithoutUserInput
+  reviewedCampaigns?: Prisma.CampaignCreateNestedManyWithoutReviewedByInput
+  reviewedAdvertisers?: Prisma.AdvertiserProfileCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventCreateNestedManyWithoutResolvedByInput
+}
+
+export type UserUncheckedCreateWithoutRiskEventsInput = {
+  id?: string
+  email: string
+  emailVerifiedAt?: Date | string | null
+  passwordHash: string
+  status?: $Enums.UserStatus
+  role?: $Enums.UserRole
+  referralCode: string
+  referredById?: string | null
+  failedLoginAttempts?: number
+  lockedUntil?: Date | string | null
+  passwordChangedAt?: Date | string | null
+  lastLoginAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referredUsers?: Prisma.UserUncheckedCreateNestedManyWithoutReferredByInput
+  profile?: Prisma.ProfileUncheckedCreateNestedOneWithoutUserInput
+  wallet?: Prisma.WalletUncheckedCreateNestedOneWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  devices?: Prisma.DeviceUncheckedCreateNestedManyWithoutUserInput
+  watchSessions?: Prisma.WatchSessionUncheckedCreateNestedManyWithoutUserInput
+  rewards?: Prisma.RewardUncheckedCreateNestedManyWithoutUserInput
+  ledgerTransactions?: Prisma.LedgerTransactionUncheckedCreateNestedManyWithoutUserInput
+  withdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationUncheckedCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  referralsGiven?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
+  referralReceived?: Prisma.ReferralUncheckedCreateNestedOneWithoutReferredUserInput
+  advertiserProfile?: Prisma.AdvertiserProfileUncheckedCreateNestedOneWithoutUserInput
+  advertiserMemberships?: Prisma.AdvertiserMemberUncheckedCreateNestedManyWithoutUserInput
+  reviewedCampaigns?: Prisma.CampaignUncheckedCreateNestedManyWithoutReviewedByInput
+  reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedCreateNestedManyWithoutReviewedByInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutProcessedByInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedCreateNestedManyWithoutResolvedByInput
+}
+
+export type UserCreateOrConnectWithoutRiskEventsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutRiskEventsInput, Prisma.UserUncheckedCreateWithoutRiskEventsInput>
+}
+
+export type UserUpsertWithoutResolvedRiskEventsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutResolvedRiskEventsInput, Prisma.UserUncheckedUpdateWithoutResolvedRiskEventsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutResolvedRiskEventsInput, Prisma.UserUncheckedCreateWithoutResolvedRiskEventsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutResolvedRiskEventsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutResolvedRiskEventsInput, Prisma.UserUncheckedUpdateWithoutResolvedRiskEventsInput>
+}
+
+export type UserUpdateWithoutResolvedRiskEventsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referredBy?: Prisma.UserUpdateOneWithoutReferredUsersNestedInput
+  referredUsers?: Prisma.UserUpdateManyWithoutReferredByNestedInput
+  profile?: Prisma.ProfileUpdateOneWithoutUserNestedInput
+  wallet?: Prisma.WalletUpdateOneWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  devices?: Prisma.DeviceUpdateManyWithoutUserNestedInput
+  watchSessions?: Prisma.WatchSessionUpdateManyWithoutUserNestedInput
+  rewards?: Prisma.RewardUpdateManyWithoutUserNestedInput
+  ledgerTransactions?: Prisma.LedgerTransactionUpdateManyWithoutUserNestedInput
+  withdrawals?: Prisma.WithdrawalUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  referralsGiven?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
+  referralReceived?: Prisma.ReferralUpdateOneWithoutReferredUserNestedInput
+  advertiserProfile?: Prisma.AdvertiserProfileUpdateOneWithoutUserNestedInput
+  advertiserMemberships?: Prisma.AdvertiserMemberUpdateManyWithoutUserNestedInput
+  reviewedCampaigns?: Prisma.CampaignUpdateManyWithoutReviewedByNestedInput
+  reviewedAdvertisers?: Prisma.AdvertiserProfileUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUpdateManyWithoutProcessedByNestedInput
+  riskEvents?: Prisma.RiskEventUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutResolvedRiskEventsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  referredById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referredUsers?: Prisma.UserUncheckedUpdateManyWithoutReferredByNestedInput
+  profile?: Prisma.ProfileUncheckedUpdateOneWithoutUserNestedInput
+  wallet?: Prisma.WalletUncheckedUpdateOneWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  devices?: Prisma.DeviceUncheckedUpdateManyWithoutUserNestedInput
+  watchSessions?: Prisma.WatchSessionUncheckedUpdateManyWithoutUserNestedInput
+  rewards?: Prisma.RewardUncheckedUpdateManyWithoutUserNestedInput
+  ledgerTransactions?: Prisma.LedgerTransactionUncheckedUpdateManyWithoutUserNestedInput
+  withdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationUncheckedUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  referralsGiven?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
+  referralReceived?: Prisma.ReferralUncheckedUpdateOneWithoutReferredUserNestedInput
+  advertiserProfile?: Prisma.AdvertiserProfileUncheckedUpdateOneWithoutUserNestedInput
+  advertiserMemberships?: Prisma.AdvertiserMemberUncheckedUpdateManyWithoutUserNestedInput
+  reviewedCampaigns?: Prisma.CampaignUncheckedUpdateManyWithoutReviewedByNestedInput
+  reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutProcessedByNestedInput
+  riskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserUpsertWithoutRiskEventsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutRiskEventsInput, Prisma.UserUncheckedUpdateWithoutRiskEventsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutRiskEventsInput, Prisma.UserUncheckedCreateWithoutRiskEventsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutRiskEventsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutRiskEventsInput, Prisma.UserUncheckedUpdateWithoutRiskEventsInput>
+}
+
+export type UserUpdateWithoutRiskEventsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referredBy?: Prisma.UserUpdateOneWithoutReferredUsersNestedInput
+  referredUsers?: Prisma.UserUpdateManyWithoutReferredByNestedInput
+  profile?: Prisma.ProfileUpdateOneWithoutUserNestedInput
+  wallet?: Prisma.WalletUpdateOneWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  devices?: Prisma.DeviceUpdateManyWithoutUserNestedInput
+  watchSessions?: Prisma.WatchSessionUpdateManyWithoutUserNestedInput
+  rewards?: Prisma.RewardUpdateManyWithoutUserNestedInput
+  ledgerTransactions?: Prisma.LedgerTransactionUpdateManyWithoutUserNestedInput
+  withdrawals?: Prisma.WithdrawalUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  referralsGiven?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
+  referralReceived?: Prisma.ReferralUpdateOneWithoutReferredUserNestedInput
+  advertiserProfile?: Prisma.AdvertiserProfileUpdateOneWithoutUserNestedInput
+  advertiserMemberships?: Prisma.AdvertiserMemberUpdateManyWithoutUserNestedInput
+  reviewedCampaigns?: Prisma.CampaignUpdateManyWithoutReviewedByNestedInput
+  reviewedAdvertisers?: Prisma.AdvertiserProfileUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUpdateManyWithoutResolvedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutRiskEventsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  referredById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referredUsers?: Prisma.UserUncheckedUpdateManyWithoutReferredByNestedInput
+  profile?: Prisma.ProfileUncheckedUpdateOneWithoutUserNestedInput
+  wallet?: Prisma.WalletUncheckedUpdateOneWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  devices?: Prisma.DeviceUncheckedUpdateManyWithoutUserNestedInput
+  watchSessions?: Prisma.WatchSessionUncheckedUpdateManyWithoutUserNestedInput
+  rewards?: Prisma.RewardUncheckedUpdateManyWithoutUserNestedInput
+  ledgerTransactions?: Prisma.LedgerTransactionUncheckedUpdateManyWithoutUserNestedInput
+  withdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationUncheckedUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  referralsGiven?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
+  referralReceived?: Prisma.ReferralUncheckedUpdateOneWithoutReferredUserNestedInput
+  advertiserProfile?: Prisma.AdvertiserProfileUncheckedUpdateOneWithoutUserNestedInput
+  advertiserMemberships?: Prisma.AdvertiserMemberUncheckedUpdateManyWithoutUserNestedInput
+  reviewedCampaigns?: Prisma.CampaignUncheckedUpdateManyWithoutReviewedByNestedInput
+  reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutResolvedByNestedInput
 }
 
 export type UserCreateManyReferredByInput = {
@@ -4132,7 +4941,7 @@ export type UserCreateManyReferredByInput = {
   emailVerifiedAt?: Date | string | null
   passwordHash: string
   status?: $Enums.UserStatus
-  role?: string
+  role?: $Enums.UserRole
   referralCode: string
   failedLoginAttempts?: number
   lockedUntil?: Date | string | null
@@ -4148,7 +4957,7 @@ export type UserUpdateWithoutReferredByInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4175,6 +4984,9 @@ export type UserUpdateWithoutReferredByInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUpdateManyWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUpdateManyWithoutReviewedByNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReferredByInput = {
@@ -4183,7 +4995,7 @@ export type UserUncheckedUpdateWithoutReferredByInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4210,6 +5022,9 @@ export type UserUncheckedUpdateWithoutReferredByInput = {
   advertiserMemberships?: Prisma.AdvertiserMemberUncheckedUpdateManyWithoutUserNestedInput
   reviewedCampaigns?: Prisma.CampaignUncheckedUpdateManyWithoutReviewedByNestedInput
   reviewedAdvertisers?: Prisma.AdvertiserProfileUncheckedUpdateManyWithoutReviewedByNestedInput
+  processedWithdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutProcessedByNestedInput
+  resolvedRiskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutResolvedByNestedInput
+  riskEvents?: Prisma.RiskEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateManyWithoutReferredByInput = {
@@ -4218,7 +5033,7 @@ export type UserUncheckedUpdateManyWithoutReferredByInput = {
   emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4249,6 +5064,9 @@ export type UserCountOutputType = {
   advertiserMemberships: number
   reviewedCampaigns: number
   reviewedAdvertisers: number
+  processedWithdrawals: number
+  resolvedRiskEvents: number
+  riskEvents: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -4267,6 +5085,9 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   advertiserMemberships?: boolean | UserCountOutputTypeCountAdvertiserMembershipsArgs
   reviewedCampaigns?: boolean | UserCountOutputTypeCountReviewedCampaignsArgs
   reviewedAdvertisers?: boolean | UserCountOutputTypeCountReviewedAdvertisersArgs
+  processedWithdrawals?: boolean | UserCountOutputTypeCountProcessedWithdrawalsArgs
+  resolvedRiskEvents?: boolean | UserCountOutputTypeCountResolvedRiskEventsArgs
+  riskEvents?: boolean | UserCountOutputTypeCountRiskEventsArgs
 }
 
 /**
@@ -4384,6 +5205,27 @@ export type UserCountOutputTypeCountReviewedAdvertisersArgs<ExtArgs extends runt
   where?: Prisma.AdvertiserProfileWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountProcessedWithdrawalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.WithdrawalWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountResolvedRiskEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.RiskEventWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountRiskEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.RiskEventWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -4420,6 +5262,9 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   advertiserMemberships?: boolean | Prisma.User$advertiserMembershipsArgs<ExtArgs>
   reviewedCampaigns?: boolean | Prisma.User$reviewedCampaignsArgs<ExtArgs>
   reviewedAdvertisers?: boolean | Prisma.User$reviewedAdvertisersArgs<ExtArgs>
+  processedWithdrawals?: boolean | Prisma.User$processedWithdrawalsArgs<ExtArgs>
+  resolvedRiskEvents?: boolean | Prisma.User$resolvedRiskEventsArgs<ExtArgs>
+  riskEvents?: boolean | Prisma.User$riskEventsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -4498,6 +5343,9 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   advertiserMemberships?: boolean | Prisma.User$advertiserMembershipsArgs<ExtArgs>
   reviewedCampaigns?: boolean | Prisma.User$reviewedCampaignsArgs<ExtArgs>
   reviewedAdvertisers?: boolean | Prisma.User$reviewedAdvertisersArgs<ExtArgs>
+  processedWithdrawals?: boolean | Prisma.User$processedWithdrawalsArgs<ExtArgs>
+  resolvedRiskEvents?: boolean | Prisma.User$resolvedRiskEventsArgs<ExtArgs>
+  riskEvents?: boolean | Prisma.User$riskEventsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -4530,6 +5378,9 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     advertiserMemberships: Prisma.$AdvertiserMemberPayload<ExtArgs>[]
     reviewedCampaigns: Prisma.$CampaignPayload<ExtArgs>[]
     reviewedAdvertisers: Prisma.$AdvertiserProfilePayload<ExtArgs>[]
+    processedWithdrawals: Prisma.$WithdrawalPayload<ExtArgs>[]
+    resolvedRiskEvents: Prisma.$RiskEventPayload<ExtArgs>[]
+    riskEvents: Prisma.$RiskEventPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -4537,7 +5388,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     emailVerifiedAt: Date | null
     passwordHash: string
     status: $Enums.UserStatus
-    role: string
+    role: $Enums.UserRole
     referralCode: string
     referredById: string | null
     failedLoginAttempts: number
@@ -4960,6 +5811,9 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   advertiserMemberships<T extends Prisma.User$advertiserMembershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$advertiserMembershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AdvertiserMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reviewedCampaigns<T extends Prisma.User$reviewedCampaignsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reviewedCampaignsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CampaignPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reviewedAdvertisers<T extends Prisma.User$reviewedAdvertisersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reviewedAdvertisersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AdvertiserProfilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  processedWithdrawals<T extends Prisma.User$processedWithdrawalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$processedWithdrawalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WithdrawalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  resolvedRiskEvents<T extends Prisma.User$resolvedRiskEventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$resolvedRiskEventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RiskEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  riskEvents<T extends Prisma.User$riskEventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$riskEventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RiskEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4994,7 +5848,7 @@ export interface UserFieldRefs {
   readonly emailVerifiedAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly passwordHash: Prisma.FieldRef<"User", 'String'>
   readonly status: Prisma.FieldRef<"User", 'UserStatus'>
-  readonly role: Prisma.FieldRef<"User", 'String'>
+  readonly role: Prisma.FieldRef<"User", 'UserRole'>
   readonly referralCode: Prisma.FieldRef<"User", 'String'>
   readonly referredById: Prisma.FieldRef<"User", 'String'>
   readonly failedLoginAttempts: Prisma.FieldRef<"User", 'Int'>
@@ -5856,6 +6710,78 @@ export type User$reviewedAdvertisersArgs<ExtArgs extends runtime.Types.Extension
   take?: number
   skip?: number
   distinct?: Prisma.AdvertiserProfileScalarFieldEnum | Prisma.AdvertiserProfileScalarFieldEnum[]
+}
+
+/**
+ * User.processedWithdrawals
+ */
+export type User$processedWithdrawalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Withdrawal
+   */
+  select?: Prisma.WithdrawalSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Withdrawal
+   */
+  omit?: Prisma.WithdrawalOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WithdrawalInclude<ExtArgs> | null
+  where?: Prisma.WithdrawalWhereInput
+  orderBy?: Prisma.WithdrawalOrderByWithRelationInput | Prisma.WithdrawalOrderByWithRelationInput[]
+  cursor?: Prisma.WithdrawalWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.WithdrawalScalarFieldEnum | Prisma.WithdrawalScalarFieldEnum[]
+}
+
+/**
+ * User.resolvedRiskEvents
+ */
+export type User$resolvedRiskEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the RiskEvent
+   */
+  select?: Prisma.RiskEventSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the RiskEvent
+   */
+  omit?: Prisma.RiskEventOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RiskEventInclude<ExtArgs> | null
+  where?: Prisma.RiskEventWhereInput
+  orderBy?: Prisma.RiskEventOrderByWithRelationInput | Prisma.RiskEventOrderByWithRelationInput[]
+  cursor?: Prisma.RiskEventWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.RiskEventScalarFieldEnum | Prisma.RiskEventScalarFieldEnum[]
+}
+
+/**
+ * User.riskEvents
+ */
+export type User$riskEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the RiskEvent
+   */
+  select?: Prisma.RiskEventSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the RiskEvent
+   */
+  omit?: Prisma.RiskEventOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RiskEventInclude<ExtArgs> | null
+  where?: Prisma.RiskEventWhereInput
+  orderBy?: Prisma.RiskEventOrderByWithRelationInput | Prisma.RiskEventOrderByWithRelationInput[]
+  cursor?: Prisma.RiskEventWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.RiskEventScalarFieldEnum | Prisma.RiskEventScalarFieldEnum[]
 }
 
 /**

@@ -6,6 +6,8 @@ import {
   enforceRateLimit,
   type RateLimitRule,
 } from "@/lib/security/rate-limit";
+import { maintenanceMode } from "@/lib/settings";
+import { Errors } from "@/lib/errors";
 
 type RouteOptions = {
   originCheck?: boolean;
@@ -18,9 +20,25 @@ type RouteHandler = (
   routeContext?: { params: Promise<Record<string, string>> },
 ) => Promise<Response> | Response;
 
+// Writes are blocked during maintenance, but these must stay reachable so the
+// platform can be recovered and so providers can always deliver webhooks.
+const MAINTENANCE_EXEMPT_PREFIXES = ["/api/admin", "/api/webhooks", "/api/auth"];
+
+async function assertWritesAllowed(req: Request): Promise<void> {
+  if (req.method === "GET") return;
+  const pathname = new URL(req.url).pathname;
+  if (MAINTENANCE_EXEMPT_PREFIXES.some((p) => pathname.startsWith(p))) return;
+  if (await maintenanceMode()) {
+    throw Errors.serviceUnavailable(
+      "RewardHub is under maintenance. Please try again shortly.",
+    );
+  }
+}
+
 /**
  * Standard wrapper for API route handlers:
  *  - CSRF/origin verification for state changes
+ *  - maintenance-mode gate for state-changing traffic
  *  - rate limiting
  *  - unified error -> JSON response
  */
@@ -32,6 +50,7 @@ export function route(opts: RouteOptions, handler: RouteHandler) {
     try {
       const ctx = getRequestContext(req);
       if (opts.originCheck !== false) assertSafeOrigin(req);
+      await assertWritesAllowed(req);
       if (opts.rateLimit) {
         const rules = Array.isArray(opts.rateLimit)
           ? opts.rateLimit

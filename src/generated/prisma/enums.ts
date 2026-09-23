@@ -18,6 +18,15 @@ export const UserStatus = {
 export type UserStatus = (typeof UserStatus)[keyof typeof UserStatus]
 
 
+export const UserRole = {
+  USER: 'USER',
+  ADMIN: 'ADMIN',
+  SUPER_ADMIN: 'SUPER_ADMIN'
+} as const
+
+export type UserRole = (typeof UserRole)[keyof typeof UserRole]
+
+
 export const OpportunityType = {
   VIDEO: 'VIDEO',
   SURVEY: 'SURVEY',
@@ -136,7 +145,20 @@ export const NotificationType = {
   CAMPAIGN_COMPLETED: 'CAMPAIGN_COMPLETED',
   LOW_BUDGET: 'LOW_BUDGET',
   PAYMENT_SUCCESS: 'PAYMENT_SUCCESS',
-  PAYMENT_FAILED: 'PAYMENT_FAILED'
+  PAYMENT_FAILED: 'PAYMENT_FAILED',
+  CAMPAIGN_DELETED: 'CAMPAIGN_DELETED',
+  CAMPAIGN_RESUMED: 'CAMPAIGN_RESUMED',
+  CREATIVE_REJECTED: 'CREATIVE_REJECTED',
+  PAYMENT_REFUNDED: 'PAYMENT_REFUNDED',
+  PAYOUT_SUCCEEDED: 'PAYOUT_SUCCEEDED',
+  PAYOUT_FAILED: 'PAYOUT_FAILED',
+  HIGH_RISK_FLAG: 'HIGH_RISK_FLAG',
+  ACCOUNT_SUSPENDED: 'ACCOUNT_SUSPENDED',
+  ACCOUNT_REACTIVATED: 'ACCOUNT_REACTIVATED',
+  ADVERTISER_APPROVED: 'ADVERTISER_APPROVED',
+  ADVERTISER_REJECTED: 'ADVERTISER_REJECTED',
+  ADVERTISER_SUSPENDED: 'ADVERTISER_SUSPENDED',
+  ADVERTISER_REACTIVATED: 'ADVERTISER_REACTIVATED'
 } as const
 
 export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType]
@@ -150,6 +172,30 @@ export const ReferralStatus = {
 } as const
 
 export type ReferralStatus = (typeof ReferralStatus)[keyof typeof ReferralStatus]
+
+
+export const WebhookEventStatus = {
+  PENDING: 'PENDING',
+  PROCESSED: 'PROCESSED',
+  IGNORED: 'IGNORED',
+  FAILED: 'FAILED'
+} as const
+
+export type WebhookEventStatus = (typeof WebhookEventStatus)[keyof typeof WebhookEventStatus]
+
+
+export const RiskEventType = {
+  SESSION_TAMPERING: 'SESSION_TAMPERING',
+  HEARTBEAT_ANOMALY: 'HEARTBEAT_ANOMALY',
+  DEVICE_IP_MISMATCH: 'DEVICE_IP_MISMATCH',
+  RAPID_CONSUMPTION: 'RAPID_CONSUMPTION',
+  WITHDRAWAL_ABUSE: 'WITHDRAWAL_ABUSE',
+  SUSPICIOUS_REFERRAL: 'SUSPICIOUS_REFERRAL',
+  ACCOUNT_FLAG: 'ACCOUNT_FLAG',
+  SYSTEM: 'SYSTEM'
+} as const
+
+export type RiskEventType = (typeof RiskEventType)[keyof typeof RiskEventType]
 
 
 export const AdvertiserStatus = {

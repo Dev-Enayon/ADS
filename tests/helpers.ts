@@ -4,9 +4,16 @@
  */
 
 import bcrypt from "bcryptjs";
-import { randomInt } from "node:crypto";
+import { randomInt, randomUUID } from "node:crypto";
 import { prisma } from "../src/lib/db";
-import { OpportunitySource, OpportunityStatus, OpportunityType, UserStatus } from "../src/generated/prisma/enums";
+import {
+  OpportunitySource,
+  OpportunityStatus,
+  OpportunityType,
+  TeamRole,
+  UserRole,
+  UserStatus,
+} from "../src/generated/prisma/enums";
 
 export const BCRYPT_ROUNDS = 10;
 
@@ -49,6 +56,91 @@ export async function createUser(opts: {
     include: { profile: true, wallet: true },
   });
   return user;
+}
+
+let adminCounter = 0;
+
+/** Creates an admin (or super admin) user with an active, verified account. */
+export async function createAdmin(opts: {
+  email?: string;
+  password?: string;
+  super?: boolean;
+} = {}) {
+  const email =
+    opts.email ??
+    `admin-${opts.super ? "super" : ""}${++adminCounter}@test.dev`;
+  const user = await createUser({ email, password: opts.password, verified: true });
+  const updated = await prisma.user.update({
+    where: { id: user.id },
+    data: { role: opts.super ? UserRole.SUPER_ADMIN : UserRole.ADMIN },
+    include: { profile: true, wallet: true },
+  });
+  return updated;
+}
+
+let advertiserCounter = 0;
+
+/** Creates an advertiser profile with its wallet and OWNER membership row. */
+export async function createAdvertiser(opts: {
+  businessName?: string;
+  businessEmail?: string;
+  status?: string;
+  owner?: { id: string };
+} = {}) {
+  const owner = opts.owner ?? (await createUser({ verified: true }));
+  const businessName = opts.businessName ?? `Test Brand ${++advertiserCounter}`;
+  const advertiser = await prisma.advertiserProfile.create({
+    data: {
+      userId: owner.id,
+      businessName,
+      businessEmail: opts.businessEmail ?? `brand-${advertiserCounter}@test.dev`,
+      status: (opts.status ?? "PENDING") as never,
+    },
+  });
+  await prisma.advertiserWallet.create({ data: { advertiserId: advertiser.id } });
+  await prisma.advertiserMember.create({
+    data: { advertiserId: advertiser.id, userId: owner.id, role: TeamRole.OWNER },
+  });
+  return { owner, advertiser };
+}
+
+/** Credits an ACTIVE campaign row directly so admin moderation can be tested. */
+export async function createCampaignForAdmin(opts: {
+  advertiserId: string;
+  createdBy: string;
+  status?: string;
+  rewardPerCompletion?: number;
+  maxCompletions?: number;
+  allocatedAmount?: number;
+}) {
+  const rewardPerCompletion = opts.rewardPerCompletion ?? 5000;
+  const maxCompletions = opts.maxCompletions ?? 100;
+  const allocatedAmount = opts.allocatedAmount ?? rewardPerCompletion * maxCompletions;
+  return prisma.campaign.create({
+    data: {
+      advertiserId: opts.advertiserId,
+      createdBy: opts.createdBy,
+      name: `Admin test campaign ${++advertiserCounter}`,
+      status: (opts.status ?? "DRAFT") as never,
+      rewardPerCompletion,
+      maxCompletions,
+      budget: rewardPerCompletion * maxCompletions,
+      allocatedAmount,
+      remainingBudget: allocatedAmount,
+    },
+  });
+}
+
+/** Credits the user's available balance (counts as earnings), uniquely ref'd. */
+export async function fundUser(userId: string, amount: number) {
+  const { creditAvailable } = await import("../src/services/wallet");
+  await creditAvailable(prisma, {
+    userId,
+    type: "REWARD",
+    amount,
+    description: "Test earnings",
+    reference: `fund-${userId}-${amount}-${randomUUID()}`,
+  });
 }
 
 let oppCounter = 0;

@@ -1,10 +1,16 @@
 import "server-only";
 
-import { OpportunityStatus, UserStatus, WatchSessionStatus } from "@/generated/prisma/enums";
+import { OpportunityStatus, RiskEventType, UserStatus, WatchSessionStatus } from "@/generated/prisma/enums";
 import { prisma } from "@/lib/db";
 import { Errors } from "@/lib/errors";
 import { getEligibleOpportunity } from "@/services/opportunities";
-import { maxActiveWatchSessions } from "@/lib/settings";
+import {
+  maxActiveWatchSessions,
+  maxCompletionsPerHour,
+  watchHeartbeatMinIntervalSeconds,
+  watchMaxStepSeconds,
+} from "@/lib/settings";
+import { recordRiskEvent } from "@/services/risk";
 
 const OPEN_STATUSES: WatchSessionStatus[] = [
   WatchSessionStatus.STARTED,
@@ -111,6 +117,13 @@ export type HeartbeatInput = {
  * Records progress. The submitted time is never trusted for reward
  * eligibility (the server uses wall-clock elapsed time on completion); it is
  * only used to drive the progress UI and capped at the required duration.
+ *
+ * Deterministic, always-non-blocking fraud signals ride along:
+ *  - a heartbeat arriving faster than the minimum interval,
+ *  - progress claimed faster than real wall-clock time allows,
+ *  - a single heartbeat claiming more progress than the configured max step.
+ * All of these record a HEARTBEAT_ANOMALY risk event and never reject a
+ * legitimate session (either direction).
  */
 export async function heartbeatWatchSession(input: HeartbeatInput) {
   const session = await prisma.watchSession.findFirst({
@@ -126,12 +139,65 @@ export async function heartbeatWatchSession(input: HeartbeatInput) {
     Math.min(Math.floor(input.watchedSeconds), session.requiredDuration),
   );
 
+  const now = Date.now();
+  const wallSinceLast =
+    session.lastHeartbeatAt ? (now - session.lastHeartbeatAt.getTime()) / 1000 : null;
+  const claimedDelta = clamped - session.watchedDuration;
+
+  try {
+    const [minInterval, maxStep] = await Promise.all([
+      watchHeartbeatMinIntervalSeconds(),
+      watchMaxStepSeconds(),
+    ]);
+    if (wallSinceLast != null && wallSinceLast < minInterval) {
+      await recordRiskEvent({
+        userId: input.userId,
+        type: RiskEventType.HEARTBEAT_ANOMALY,
+        severity: "LOW",
+        description: "Heartbeats arriving faster than the minimum interval.",
+        entityType: "WatchSession",
+        entityId: session.id,
+        meta: { wallSinceLast: Math.round(wallSinceLast), minInterval },
+        ipAddress: null,
+      });
+    }
+    if (
+      wallSinceLast != null &&
+      claimedDelta > wallSinceLast + 2 // two-second tolerance for jitter/buffering
+    ) {
+      await recordRiskEvent({
+        userId: input.userId,
+        type: RiskEventType.HEARTBEAT_ANOMALY,
+        severity: "MEDIUM",
+        description: "Watch progress claimed ahead of wall-clock time.",
+        entityType: "WatchSession",
+        entityId: session.id,
+        meta: { claimedDelta, wallSinceLast: Math.round(wallSinceLast) },
+        ipAddress: null,
+      });
+    }
+    if (claimedDelta > maxStep) {
+      await recordRiskEvent({
+        userId: input.userId,
+        type: RiskEventType.HEARTBEAT_ANOMALY,
+        severity: "MEDIUM",
+        description: "A single heartbeat claimed far more progress than allowed.",
+        entityType: "WatchSession",
+        entityId: session.id,
+        meta: { claimedDelta, maxStep },
+        ipAddress: null,
+      });
+    }
+  } catch {
+    // Risk capture is best-effort and must never block progress.
+  }
+
   const updated = await prisma.watchSession.update({
     where: { id: session.id },
     data: {
       status: WatchSessionStatus.IN_PROGRESS,
       watchedDuration: Math.max(session.watchedDuration, clamped),
-      lastHeartbeatAt: new Date(),
+      lastHeartbeatAt: new Date(now),
     },
   });
 
@@ -162,6 +228,9 @@ export type CompleteWatchInput = {
  * - Wall-clock elapsed time must meet the required duration.
  * - Only STARTED/IN_PROGRESS sessions can complete (atomic guard).
  * - One reward per session (unique watchSessionId).
+ *
+ * Best-effort, non-blocking signals are also captured here: device/IP
+ * mismatch against the originating session and suspicious completion volume.
  */
 export async function completeWatchSession(input: CompleteWatchInput) {
   const user = await prisma.user.findUnique({ where: { id: input.userId } });
@@ -181,6 +250,8 @@ export async function completeWatchSession(input: CompleteWatchInput) {
   if (session.opportunity.status !== OpportunityStatus.ACTIVE) {
     throw Errors.conflict("This opportunity is no longer active.", "OPPORTUNITY_UNAVAILABLE");
   }
+
+  await captureCompletionRiskSignals(session, input);
 
   const elapsedSeconds = (Date.now() - session.startedAt.getTime()) / 1000;
   if (elapsedSeconds < session.requiredDuration) {
@@ -204,4 +275,76 @@ export async function completeWatchSession(input: CompleteWatchInput) {
   });
 
   return { reward };
+}
+
+/**
+ * Non-blocking fraud signals evaluated at completion time. All failures are
+ * swallowed: the completion path can never be degraded by the risk layer.
+ */
+async function captureCompletionRiskSignals(
+  session: {
+    id: string;
+    userId: string;
+    ipAddress: string | null;
+    userAgent: string | null;
+    startedAt: Date;
+  },
+  input: CompleteWatchInput,
+): Promise<void> {
+  try {
+    if (
+      session.ipAddress &&
+      input.ip &&
+      session.ipAddress !== input.ip
+    ) {
+      await recordRiskEvent({
+        userId: input.userId,
+        type: RiskEventType.DEVICE_IP_MISMATCH,
+        severity: "MEDIUM",
+        description: "Watch session completed from a different IP than it started on.",
+        entityType: "WatchSession",
+        entityId: session.id,
+        meta: { startedIp: session.ipAddress, completedIp: input.ip },
+        ipAddress: input.ip,
+        userAgent: input.userAgent,
+      });
+    }
+    if (
+      session.userAgent &&
+      input.userAgent &&
+      session.userAgent !== input.userAgent
+    ) {
+      await recordRiskEvent({
+        userId: input.userId,
+        type: RiskEventType.SESSION_TAMPERING,
+        severity: "MEDIUM",
+        description: "Watch session completed with a different user agent.",
+        entityType: "WatchSession",
+        entityId: session.id,
+        userAgent: input.userAgent,
+      });
+    }
+
+    const hourAgo = new Date(Date.now() - 60 * 60 * 1000);
+    const [completionsThisHour, threshold] = await Promise.all([
+      prisma.reward.count({
+        where: { userId: input.userId, createdAt: { gte: hourAgo } },
+      }),
+      maxCompletionsPerHour(),
+    ]);
+    if (threshold > 0 && completionsThisHour + 1 > threshold) {
+      await recordRiskEvent({
+        userId: input.userId,
+        type: RiskEventType.RAPID_CONSUMPTION,
+        severity: "HIGH",
+        description: "More watch completions than the per-hour threshold in the last hour.",
+        entityType: "WatchSession",
+        entityId: session.id,
+        meta: { completionsThisHour, maxPerHour: threshold },
+        ipAddress: input.ip,
+      });
+    }
+  } catch {
+    // best-effort
+  }
 }
