@@ -12,6 +12,9 @@ export const env = {
   payoutProvider: process.env.PAYOUT_PROVIDER ?? "MANUAL",
   paymentWebhookSecret: process.env.PAYMENT_WEBHOOK_SECRET ?? "",
   payoutWebhookSecret: process.env.PAYOUT_WEBHOOK_SECRET ?? "",
+  // Server-side Vercel Blob token (avatar + asset object storage).
+  // Server-only — never exposes to client bundles or NEXT_PUBLIC_*.
+  blobReadWriteToken: process.env.BLOB_READ_WRITE_TOKEN ?? "",
   // Optional bootstrap super admin (idempotent, set once at deploy time).
   bootstrapAdminEmail: process.env.BOOTSTRAP_ADMIN_EMAIL ?? "",
   bootstrapAdminPassword: process.env.BOOTSTRAP_ADMIN_PASSWORD ?? "",

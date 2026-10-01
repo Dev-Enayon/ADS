@@ -1,34 +1,39 @@
 import { NextResponse } from "next/server";
 import { randomUUID } from "node:crypto";
-import { mkdir, writeFile, unlink } from "node:fs/promises";
-import path from "node:path";
 
-import { getRequestContext } from "@/lib/api";
-import { route } from "@/lib/api-handler";
-import { requireUserFromRequest } from "@/lib/auth/session";
-import { Errors } from "@/lib/errors";
 import { prisma } from "@/lib/db";
+import { Errors } from "@/lib/errors";
+import { requireUserFromRequest } from "@/lib/auth/session";
+import { route } from "@/lib/api-handler";
 
-const AVATAR_DIR = path.join(process.cwd(), "storage", "avatars");
-const MAX_SIZE_BYTES = 2 * 1024 * 1024;
-
-const ALLOWED: Record<string, string> = {
-  "image/png": "png",
-  "image/jpeg": "jpg",
-  "image/webp": "webp",
-};
+import {
+  MAX_SIZE_BYTES,
+  ALLOWED,
+  extForType,
+  sniffImageBytes,
+  isBlobManagedUrl,
+  storeAvatarBlob,
+  delPreviousAvatarAfterSuccess,
+} from "@/lib/avatar/upload";
 
 export const runtime = "nodejs";
 
 export const POST = route({ originCheck: true }, async (req) => {
   const { user } = await requireUserFromRequest(req);
 
+  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+    throw Errors.serviceUnavailable(
+      "Avatar storage is not configured. Set BLOB_READ_WRITE_TOKEN.",
+    );
+  }
+
   const form = await req.formData();
   const file = form.get("avatar");
   if (!(file instanceof File)) {
     throw Errors.badRequest("Upload an avatar file.", "NO_FILE");
   }
-  const ext = ALLOWED[file.type];
+
+  const ext = extForType(file.type);
   if (!ext) {
     throw Errors.badRequest("Avatar must be a PNG, JPEG or WebP image.", "UNSUPPORTED_TYPE");
   }
@@ -37,14 +42,21 @@ export const POST = route({ originCheck: true }, async (req) => {
   }
 
   const bytes = Buffer.from(await file.arrayBuffer());
-  const fileName = `${randomUUID()}.${ext}`;
+  if (!sniffImageBytes(ext, bytes)) {
+    throw Errors.badRequest("File content does not match its declared type.", "CONTENT_MISMATCH");
+  }
 
-  await mkdir(AVATAR_DIR, { recursive: true });
-  await writeFile(path.join(AVATAR_DIR, fileName), bytes);
+  const pathname = `avatars/${user.id}/${randomUUID()}.${ext}`;
+  const avatarUrl = await storeAvatarBlob({
+    pathname,
+    bytes,
+    contentType: file.type,
+  });
 
-  const avatarUrl = `/api/profile/avatar/${fileName}`;
-
-  const existing = await prisma.profile.findUnique({ where: { userId: user.id } });
+  const existing = await prisma.profile.findUnique({
+    where: { userId: user.id },
+    select: { avatarUrl: true },
+  });
 
   await prisma.profile.upsert({
     where: { userId: user.id },
@@ -52,20 +64,13 @@ export const POST = route({ originCheck: true }, async (req) => {
     create: { userId: user.id, avatarUrl },
   });
 
-  // Best-effort cleanup of the previous avatar file.
-  if (existing?.avatarUrl?.startsWith("/api/profile/avatar/")) {
-    const oldName = existing.avatarUrl.split("/").pop();
-    if (oldName && oldName !== fileName) {
-      unlink(path.join(AVATAR_DIR, oldName)).catch(() => undefined);
-    }
-  }
+  await delPreviousAvatarAfterSuccess(existing?.avatarUrl ?? null, avatarUrl);
 
   await prisma.auditLog.create({
     data: {
       userId: user.id,
       action: "PROFILE.AVATAR_UPDATED",
-      meta: { fileName } as object,
-      ipAddress: getRequestContext(req).ip as string | null,
+      meta: { pathname } as object,
     },
   });
 
